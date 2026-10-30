@@ -4,6 +4,10 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+### Changed
+
+- The illustrated overview is hosted on GitHub Pages at https://nikhileshnarkhede.github.io/spec-driven-dev/ (`docs/` on `main`).
+
 ## [0.2.0] - 2026-10-30
 
 ### Changed
