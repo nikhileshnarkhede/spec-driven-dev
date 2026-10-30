@@ -1,0 +1,14 @@
+{
+  "name": "spec-driven-dev",
+  "displayName": "Spec-Driven Dev",
+  "version": "0.2.0",
+  "description": "Build a project from one complete spec, one sub-spec at a time: build contracts, an independent test writer and runner, two read-only reviewers, an unattended loop, and a usage ledger the workflow learns from.",
+  "author": {
+    "name": "Nikhilesh Narkhede",
+    "url": "https://nikhileshnarkhede.github.io/portfolio/"
+  },
+  "homepage": "https://github.com/nikhileshnarkhede/spec-driven-dev",
+  "repository": "https://github.com/nikhileshnarkhede/spec-driven-dev",
+  "license": "MIT",
+  "keywords": ["spec-driven", "workflow", "testing", "review", "ml-pipelines", "agents"]
+}

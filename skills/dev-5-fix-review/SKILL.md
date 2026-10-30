@@ -26,7 +26,7 @@ Reviewers read a diff without running anything, so some findings are wrong. For 
 - **not a defect** — the reviewer misread the code or the spec; cite the evidence. Code that follows a contract decision is not a defect for disagreeing with it; cite the decision (`D<n>`).
 - **spec question** — the code matches one reading of something neither the spec nor the contract settles; this is a decision for the user, not a code change. Once decided, it goes into the contract's `## Late decisions`.
 
-When a **confirmed** finding is a defect in an earlier, already-closed unit's code (or its contract), log it so review misses are counted: `python "$HOME/.claude/scripts/usage_ledger.py" escaped --unit <earlier unit> --found-in NN --kind defect --note "<one line>"`. Likewise when this unit's contract forces an edit to an earlier unit's locked files, log it with `--kind coupling`.
+When a **confirmed** finding is a defect in an earlier, already-closed unit's code (or its contract), log it so review misses are counted: `python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" escaped --unit <earlier unit> --found-in NN --kind defect --note "<one line>"`. Likewise when this unit's contract forces an edit to an earlier unit's locked files, log it with `--kind coupling`.
 
 Where a finding claims a runtime behaviour (a shape, a leak, a NaN), prove or disprove it with a short script in the scratchpad rather than by reasoning alone.
 

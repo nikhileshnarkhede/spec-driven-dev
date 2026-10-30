@@ -2,7 +2,7 @@
 
 Build a large project from one complete spec with [Claude Code](https://code.claude.com), one piece at a time. No piece reaches `main` without independent evidence that it does what the spec says.
 
-Ten slash commands, seven agents, three hooks and a usage ledger. Commands share the `/dev-` prefix and carry a step number, so typing `/dev-` lists them in order, and every command ends by printing the next one to run. The ledger records what every unit cost and why it needed each round, and `/dev-retro` turns that record into changes to the workflow itself.
+A Claude Code plugin: ten slash commands, seven agents, three hooks and a usage ledger. Commands share the `/dev-` prefix and carry a step number, so typing `/dev-` lists them in order, and every command ends by printing the next one to run. The ledger records what every unit cost and why it needed each round, and `/dev-retro` turns that record into changes to the workflow itself.
 
 ```
 Brainstorm ───/dev-spec──────► Complete spec/<name>.md + <name>-api-protocol.md
@@ -48,10 +48,11 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 | `scripts/usage_ledger.py` | The usage ledger: measures a unit's cost from the session transcripts and renders `~/.claude/workflow-metrics/LEDGER.md`; called by `/dev-6-final`, `/dev-auto` and `/dev-retro` |
 | `skills/no-claude-footprint` | Optional: keeps Claude Code files and AI attribution out of a repo's history via git hooks |
 | `agents/` | `spec-verification-writer`, `spec-verification-runner`, `spec-compliance-reviewer`, `pipeline-risk-reviewer` and its re-review variant `pipeline-risk-reviewer-recheck`, plus `dev-implementer` and `dev-implementer-max` for `/dev-auto` |
+| `.claude-plugin/` | `plugin.json` (the manifest and version) and `marketplace.json`, which makes this repository its own marketplace |
+| `hooks/hooks.json` | Registers the three hooks below for every session the plugin is enabled in |
 | `hooks/checkpoint-reminder.py` | Stop hook that reminds you to run `/dev-save` when you have unsaved progress |
-| `hooks/guard-verification-file.py` | Used by the implementer agents: blocks edits to the independent verification file |
-| `hooks/guard-writer-independence.py` | Used by the test writer: refuses reads of the files the change touched |
-| `settings.example.json` | The hook entry to merge into your `settings.json` |
+| `hooks/guard-verification-file.py` | Blocks edits to the independent verification file, inside the implementer agents only (`agent_type` in the hook input) |
+| `hooks/guard-writer-independence.py` | Refuses the test writer's reads of the files the change touched, inside that agent only |
 | `docs/` | Illustrated article and full guideline |
 
 ## Unattended mode
@@ -60,26 +61,24 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 
 ## Install
 
-Requirements:
-- Claude Code with access to Opus and Sonnet;
-- git and Python 3;
-- your project's test framework (the examples use pytest);
-- `gh`, but only if you want `/dev-6-final` to open PRs.
+Requirements: Claude Code 2.1 or later with access to Opus and Sonnet; git; Python 3 on your `PATH` as `python` (the hooks and scripts call it by that name); your project's test framework (the examples use pytest); `gh` only if you want `/dev-6-final` to open PRs.
 
-```bash
-git clone https://github.com/nikhileshnarkhede/spec-driven-dev.git && cd spec-driven-dev
-./install.sh            # macOS / Linux / Git Bash
-# or
-.\install.ps1           # Windows PowerShell
+In Claude Code:
+
+```
+/plugin marketplace add nikhileshnarkhede/spec-driven-dev
+/plugin install spec-driven-dev@nikhileshnarkhede
 ```
 
-The installer copies everything into `~/.claude/` (or `$CLAUDE_CONFIG_DIR`), including `scripts/usage_ledger.py`; the ledger itself is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`. If a file with the same name already exists, it is backed up first, never overwritten. Then merge the `hooks` block from `settings.example.json` into `~/.claude/settings.json` and restart Claude Code.
+That's the whole install: the commands appear as `/dev-…` (also as `/spec-driven-dev:dev-…`), the agents and the three hooks register themselves, and `/plugin update` brings in each release. The usage ledger is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`.
+
+To work on the workflow itself, clone the repository and add your checkout as the marketplace instead (`/plugin marketplace add /path/to/spec-driven-dev`): Claude Code then loads the plugin in place, and edits take effect after `/reload-plugins`.
 
 ## Quick start
 
 1. In your project: `git init` (if needed). Either put your finished spec in `Complete spec/<name>.md`, or run `/dev-spec` to turn a brainstorm into an API protocol and a spec whose sections are already the units, in dependency order.
 2. `/dev-0-split`: confirm the proposed split and build order, answer its decision questions, then accept the baseline commit. On a project split with an earlier version, running it again adds the contracts without re-splitting.
-3. For each sub-spec, ideally one session each: `/dev-1-select NN` → `/dev-2-write NN` → `/dev-3-test NN` → `/dev-4-review NN` → `/dev-5-fix-review NN` → `/dev-6-final NN`, or `/dev-auto NN` → `/dev-6-final NN`.
+3. For each sub-spec, one fresh session each: `/dev-1-select NN` → `/dev-2-write NN` → `/dev-3-test NN` → `/dev-4-review NN` → `/dev-5-fix-review NN` → `/dev-6-final NN`, or `/dev-auto NN` → `/dev-6-final NN`.
 4. Stopping mid-way: `/dev-save`. Next time, run the command on its `Resume:` line in `CLAUDE.local.md`.
 5. Every few units: `/dev-retro`. It reads the ledger and proposes changes to the commands; you approve each one.
 

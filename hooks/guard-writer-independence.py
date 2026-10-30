@@ -6,6 +6,11 @@ one, is refused: a writer that has seen the implementation (or the implementer's
 encode what the code does instead of what the spec says. The writer's own test_subspec_NN_*.py file and
 conftest.py stay readable.
 Directory-wide Grep is not filtered; the writer's instructions cover that.
+
+Registered in hooks/hooks.json with --require-agent: a plugin hook fires in the main session and in every
+agent, so with that flag the hook acts only when the hook input's agent_type names the writer
+(spec-verification-writer, with or without a plugin prefix) and lets every other call through. Without
+the flag it applies unconditionally, for a hook attached to one agent directly.
 """
 import json
 import os
@@ -14,15 +19,28 @@ import subprocess
 import sys
 from pathlib import Path
 
+GUARDED_AGENTS = {"spec-verification-writer"}
+
 
 def norm(path: Path) -> str:
     return os.path.normcase(str(path.resolve()))
 
 
+def guarded_agent(event: dict, require_agent: bool) -> bool:
+    """True when the hook should act on this call."""
+    if not require_agent:
+        return True
+    agent = str(event.get("agent_type") or "")
+    return agent.split(":")[-1] in GUARDED_AGENTS
+
+
 def main() -> int:
+    require_agent = "--require-agent" in sys.argv[1:]
     try:
         event = json.load(sys.stdin)
     except Exception:
+        return 0
+    if not guarded_agent(event, require_agent):
         return 0
     tool_input = event.get("tool_input") or {}
     target = tool_input.get("file_path") or tool_input.get("path") or ""

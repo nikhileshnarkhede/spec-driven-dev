@@ -4,6 +4,19 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+### Changed
+
+- Distributed as a Claude Code plugin: `.claude-plugin/plugin.json` carries the version and `.claude-plugin/marketplace.json` makes this repository its own marketplace. Install with `/plugin marketplace add nikhileshnarkhede/spec-driven-dev` and `/plugin install spec-driven-dev@nikhileshnarkhede`; releases arrive through `/plugin update`.
+- The two guards (verification file, writer independence) and the save reminder are registered in `hooks/hooks.json`. Plugin agents can't carry hooks of their own, so each guard reads `agent_type` from the hook input and blocks only inside the agent it protects.
+- Skills reach the ledger script relative to themselves (`scripts/usage_ledger.py`); the ledger data stays in `~/.claude/workflow-metrics/`.
+- `/dev-retro` edits the workflow's source checkout, bumps the plugin version and records the change in this file, so it ships as a release.
+
+### Removed
+
+- `install.sh`, `install.ps1` and `settings.example.json`: the copy-into-`~/.claude` install.
+
 ## [0.1.0] - 2026-10-30
 
 First public release.
@@ -23,5 +36,6 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/releases/tag/v0.1.0

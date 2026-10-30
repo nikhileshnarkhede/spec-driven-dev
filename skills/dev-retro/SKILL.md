@@ -14,7 +14,7 @@ Arguments: $ARGUMENTS — optional project name (default: all projects in the le
 
 ## 1. Load the evidence
 
-- `python "$HOME/.claude/scripts/usage_ledger.py" render`, then read `~/.claude/workflow-metrics/LEDGER.md`, `ledger.jsonl` and `CHANGES.md`.
+- `python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" render`, then read `~/.claude/workflow-metrics/LEDGER.md`, `ledger.jsonl` and `CHANGES.md`.
 - For each unit in scope, read its `spec/NN-*/test-report.md` (`## Verification`, `## Review`, `## Review resolutions`, `## Autonomous run`) and the late decisions in its `contract.md`. The project folder is the repo whose name matches the ledger's project; ask if you can't find it.
 
 ## 2. Find the causes
@@ -45,11 +45,11 @@ Apply only the approved edits. Prepend each to `~/.claude/workflow-metrics/CHANG
 - Expected: <effect>; check after: <next 2–3 units>
 ```
 
-If the user keeps a published copy of the workflow (for example the `spec-driven-dev` repository), list the changed files so they can sync it; don't sync it yourself.
+Edit the workflow's source checkout — the repository this plugin was installed from — never the installed copy under `~/.claude/plugins/`, which is a versioned cache the next update replaces. `${CLAUDE_PLUGIN_ROOT}` is that checkout only when the marketplace was added from the local directory; otherwise ask for the path. After the edits, bump `version` in `.claude-plugin/plugin.json` and add the entry under `[Unreleased]` in `CHANGELOG.md`: installed copies receive the change through a release and `/plugin update`.
 
 ## 4b. Log this retro's own cost
 
-`python "$HOME/.claude/scripts/usage_ledger.py" record --repo . --unit retro-<YYYY-MM-DD> --kind retro --since <time you started, UTC ISO> --note "<changes applied or none>"`. The ledger's table of non-unit sessions (stopped runs, selects, retros) is what `/dev-retro` should read next time, so overhead outside units is counted too.
+`python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" record --repo . --unit retro-<YYYY-MM-DD> --kind retro --since <time you started, UTC ISO> --note "<changes applied or none>"`. The ledger's table of non-unit sessions (stopped runs, selects, retros) is what `/dev-retro` should read next time, so overhead outside units is counted too.
 
 ## 5. Report
 

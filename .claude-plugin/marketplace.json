@@ -1,0 +1,17 @@
+{
+  "name": "nikhileshnarkhede",
+  "description": "Plugins by Nikhilesh Narkhede",
+  "owner": {
+    "name": "Nikhilesh Narkhede",
+    "url": "https://github.com/nikhileshnarkhede"
+  },
+  "plugins": [
+    {
+      "name": "spec-driven-dev",
+      "source": "./",
+      "description": "Spec-driven development for Claude Code: build contracts, independent tests and reviews, an unattended loop, and a usage ledger the workflow learns from.",
+      "category": "development",
+      "tags": ["spec", "workflow", "testing", "review", "ml"]
+    }
+  ]
+}

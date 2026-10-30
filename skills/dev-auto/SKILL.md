@@ -14,7 +14,7 @@ The unit's build contract (`spec/NN-*/contract.md`) is what makes one-round runs
 
 This coordinator runs on Sonnet and is itself the second-largest cost of a unit (17% across 19 SCANIA units, `~/.claude/workflow-metrics/LEDGER.md`), because every call re-reads the whole conversation. Keep it lean: the procedures are inlined below, so don't open the sister skills; pass agents file paths, not file contents, except the interface surface; summarise each agent report into the run log in at most ten lines (its full text goes once into the test report's own section); never re-read a file you wrote in this run.
 
-Arguments: $ARGUMENTS — the sub-spec number (required; if missing, stop and say `/dev-auto NN`), optionally `--no-contract` and `--here`. Run everything from the repository root. Abbreviations: `CC` = `python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" spec --unit NN`; `CS` = `python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py"`; `IS` = `python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py"`; `LEDGER` = `python "$HOME/.claude/scripts/usage_ledger.py"`.
+Arguments: $ARGUMENTS — the sub-spec number (required; if missing, stop and say `/dev-auto NN`), optionally `--no-contract` and `--here`. Run everything from the repository root. Abbreviations: `CC` = `python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" spec --unit NN`; `CS` = `python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py"`; `IS` = `python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py"`; `LEDGER` = `python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py"`.
 
 ## 0. Unattended preconditions
 

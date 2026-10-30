@@ -68,7 +68,7 @@ Show the entry as you write it.
 No confirmation needed: this writes only to `~/.claude/workflow-metrics/`. Fill the outcome fields from the test report and the run log:
 
 ```
-python "$HOME/.claude/scripts/usage_ledger.py" record --repo . --unit NN \
+python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" record --repo . --unit NN \
   --mode "<auto + contract | steps>" --rounds <review rounds> --first-run "<passed/failed/errors of the first verification run>" \
   --first-run-classes "<the run log's 'First run by class' line, e.g. wrong behaviour=1,test defect=2; omit if none failed>" \
   --test-defects <checks the writer had to correct> --findings "fixed=<n>,accepted=<n>,handed_off=<n>,rejected=<n>" \

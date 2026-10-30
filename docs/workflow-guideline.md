@@ -1,6 +1,6 @@
 # Spec-Driven Development Workflow — Guideline
 
-A Claude Code framework for building a project from one complete spec, one sub-spec at a time, with independent testing and review before anything is committed. All commands and agents are installed globally (`~/.claude/skills/`, `~/.claude/agents/`), so they work in any project.
+A Claude Code framework for building a project from one complete spec, one sub-spec at a time, with independent testing and review before anything is committed. It installs as a Claude Code plugin (`/plugin install spec-driven-dev@nikhileshnarkhede`), so the commands, agents and hooks work in any project.
 
 Every command starts with `/dev-` and carries its step number, so typing `/dev-` lists them in order and the next step is always the next number. Every command ends its report with a `Next: /dev-…` line.
 
@@ -176,12 +176,13 @@ Each agent's tool access enforces its role, not just its instructions.
 | `check_contracts.py` | `dev-0-split/scripts/` | Enforces contract completeness at the `split`, `start` and `test` stages (section 3). |
 | `check_fidelity.py` | `dev-0-split/scripts/` | Confirms every sub-spec excerpt is word for word from the master spec, and lists master text no sub-spec covers. |
 | Templates | `dev-0-split/templates/` | `contract.md` (with `Example:`, `Extends:` and `### Robustness`), `CONVENTIONS.md` (11 conventions, including C9's `tests/stubs/` rule and C11 readability, plus the ML hazard register) and `HANDOFFS.md`. |
-| `usage_ledger.py` | `~/.claude/scripts/` | Measures a unit's cost from the session transcripts by role, model and effort; records rows, stopped runs, findings and escapes; renders `~/.claude/workflow-metrics/LEDGER.md` (section 13). |
+| `usage_ledger.py` | `scripts/` (skills reach it as `${CLAUDE_SKILL_DIR}/../../scripts/`) | Measures a unit's cost from the session transcripts by role, model and effort; records rows, stopped runs, findings and escapes; renders `~/.claude/workflow-metrics/LEDGER.md` (section 13). |
 | `changeset.py` | `dev-3-test/scripts/` | Lists everything the branch changed since main (committed, uncommitted and new files; `spec/` excluded) and prints a **fingerprint**; `/dev-6-final` refuses if the code changed after test or review. `--snapshot` records the reviewed state as a git tree object (no commit, branch or index change), and `--since` diffs against it for the focused re-review. |
 | `interface_surface.py` | `dev-3-test/scripts/` | Prints function and class signatures and constant names, with no bodies and no values. |
-| Writer guard | `~/.claude/hooks/guard-writer-independence.py` | Used by the test writer: refuses reads of the files the change touched, while `/dev-3-test` has them listed. |
-| Verification-file guard | `~/.claude/hooks/guard-verification-file.py` | Used by the implementer agents: blocks edits to `test_subspec_NN_*.py`. |
-| Save reminder | `~/.claude/hooks/checkpoint-reminder.py` (Stop hook) | If `CLAUDE.local.md` is more than 20 minutes old and the repo has uncommitted changes, reminds you to run `/dev-save`. |
+| `hooks/hooks.json` | plugin root | Registers the three hooks below in every session the plugin is enabled in. Plugin agents can't carry hooks of their own, so the two guards read `agent_type` from the hook input and act only inside the agent they protect. |
+| Writer guard | `hooks/guard-writer-independence.py` | Refuses the test writer's reads of the files the change touched, while `/dev-3-test` has them listed. |
+| Verification-file guard | `hooks/guard-verification-file.py` | Blocks the implementer agents' edits to `test_subspec_NN_*.py`. |
+| Save reminder | `hooks/checkpoint-reminder.py` (Stop hook) | If `CLAUDE.local.md` is more than 20 minutes old and the repo has uncommitted changes, reminds you to run `/dev-save`. |
 | Git hooks | `.git/hooks/pre-commit`, `commit-msg` | Installed by `/no-claude-footprint`. |
 
 ---
@@ -264,17 +265,16 @@ Each agent's tool access enforces its role, not just its instructions.
 
 ## 11. Sharing the framework
 
-The commands and agents live only on the machine where they were installed. To give someone else the same setup, copy these into their `~/.claude/` (the `spec-driven-dev` repository's installer does it for you):
+The repository is a Claude Code plugin and its own marketplace (`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`). Anyone installs it with two commands and receives each release through `/plugin update`:
 
-| Copy | What it is |
-|---|---|
-| `skills/dev-spec/`, `skills/dev-0-split/` … `skills/dev-6-final/`, `skills/dev-auto/`, `skills/dev-save/`, `skills/dev-retro/`, `skills/no-claude-footprint/` | The commands, with their `scripts/` and `templates/` folders |
-| `scripts/usage_ledger.py` | The ledger script; the ledger itself is created on the first `/dev-6-final` |
-| `agents/*.md` | The seven agents |
-| `hooks/*.py` | The save reminder and the two guards |
-| The `Stop` hook block from `settings.json` | Runs the reminder. Merge it into their settings; don't overwrite the file. The guards are wired in the agents' own frontmatter. |
+```
+/plugin marketplace add nikhileshnarkhede/spec-driven-dev
+/plugin install spec-driven-dev@nikhileshnarkhede
+```
 
-Requirements: git, Python 3 for the scripts, and the project's own test framework (pytest in the examples). `gh` is needed only to open PRs from `/dev-6-final`. The model choices assume access to Opus and Sonnet. With an organisation allowlist that excludes one of them, Claude Code ignores that override and keeps the session model.
+Requirements: git, Python 3 on the `PATH` as `python` (the hooks call it by that name), and the project's own test framework (pytest in the examples). `gh` is needed only to open PRs from `/dev-6-final`. The model choices assume access to Opus and Sonnet; with an organisation allowlist that excludes one of them, Claude Code ignores that override and keeps the session model.
+
+To change the workflow itself, clone the repository, add the checkout as the marketplace (`/plugin marketplace add /path/to/checkout`), edit, run `/reload-plugins`, then bump `version` in `plugin.json`, add a `CHANGELOG.md` entry and tag a release. `/dev-retro` follows the same path when it changes a command.
 
 ---
 
