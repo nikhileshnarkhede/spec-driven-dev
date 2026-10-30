@@ -1,4 +1,4 @@
-# spec-driven-dev
+# contract-driven-dev
 
 Build a large project from one complete spec with [Claude Code](https://code.claude.com), one piece at a time. No piece reaches `main` without independent evidence that it does what the spec says.
 
@@ -63,14 +63,14 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 
 Requirements: Claude Code 2.1 or later with access to Opus and Sonnet; git; Python 3 on your `PATH` as `python` (the hooks and scripts call it by that name); your project's test framework (the examples use pytest); `gh` only if you want `/dev-6-final` to open PRs.
 
-In Claude Code:
+In Claude Code (the repository keeps its original name, `spec-driven-dev`; the plugin is `contract-driven-dev`):
 
 ```
 /plugin marketplace add nikhileshnarkhede/spec-driven-dev
-/plugin install spec-driven-dev@nikhileshnarkhede
+/plugin install contract-driven-dev@nikhileshnarkhede
 ```
 
-That's the whole install: the commands appear as `/dev-…` (also as `/spec-driven-dev:dev-…`), the agents and the three hooks register themselves, and `/plugin update` brings in each release. The usage ledger is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`.
+That's the whole install: the commands appear as `/dev-…` (also as `/contract-driven-dev:dev-…`), the agents and the three hooks register themselves, and `/plugin update` brings in each release. The usage ledger is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`.
 
 To work on the workflow itself, clone the repository and add your checkout as the marketplace instead (`/plugin marketplace add /path/to/spec-driven-dev`): Claude Code then loads the plugin in place, and edits take effect after `/reload-plugins`.
 
@@ -83,6 +83,15 @@ To work on the workflow itself, clone the repository and add your checkout as th
 5. Every few units: `/dev-retro`. It reads the ledger and proposes changes to the commands; you approve each one.
 
 The step commands only run when you type them (`disable-model-invocation`). Every commit, push, merge and branch deletion waits for your explicit yes.
+
+## Data handling
+
+Nothing leaves your machine. The plugin makes no network calls, reads no credentials and has no MCP servers.
+
+- **Hooks** (`hooks/`): three local Python scripts. Two guards inspect the file path of a Read, Grep, Write or Edit call to keep the test writer away from the code under test and implementers away from the verification file; the Stop hook checks the age of `CLAUDE.local.md` and `git status`. They store nothing.
+- **Git**: the commands run `git` in your repository, and `gh` or `git push` only when you confirm it in `/dev-6-final`.
+- **Usage ledger** (`scripts/usage_ledger.py`): reads the Claude Code session transcripts under `~/.claude/projects/` for token counts, model names, timestamps and agent names, plus `git log` and `git diff --numstat` of your repository, and writes the result to `~/.claude/workflow-metrics/`. It never reads message text for anything but slash-command names and arguments, and nothing is sent anywhere.
+- **Files written in your project**: `spec/` (sub-specs, contracts, test reports, the handoff ledger), the code and tests you approve, `CLAUDE.local.md` (a private log you keep gitignored), and `.git/verification-writer-denylist` while a test run is in progress.
 
 ## Notes
 

@@ -5,7 +5,7 @@ argument-hint: "<NN> [--no-contract] [--here]"
 disable-model-invocation: true
 model: sonnet
 effort: medium
-allowed-tools: Read Grep Glob Edit Write Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(git switch *) Bash(git checkout -b *) Bash(git add spec/INDEX.md) Bash(git commit -m *) Bash(python *) Bash(pytest *)
+allowed-tools: Read Grep Glob Write(./spec/**) Edit(./spec/**) Write(./.git/verification-writer-denylist) Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(git switch *) Bash(git checkout -b *) Bash(git add spec/INDEX.md) Bash(git commit -m *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *) Bash(python -m pytest *) Bash(pytest *)
 ---
 
 Work as the engineering lead running an unattended build: delegate the work, keep the evidence honest, decide the way the user would decide, and write every decision down so the user can audit the run in two minutes afterwards. The user asked not to be interrupted, so ask nothing during the rounds; the only question comes at the end (hardening candidates, step 3). When a decision would normally be theirs, apply the rules below and record what you chose and why.

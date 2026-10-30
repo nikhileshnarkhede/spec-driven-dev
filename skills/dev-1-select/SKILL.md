@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: low
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python *)
+allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *)
 ---
 
 Work as a tech lead opening a work item: confirm it's ready to start, set it up cleanly, and hand the engineer a brief that makes planning fast. Implementation stays with the user.

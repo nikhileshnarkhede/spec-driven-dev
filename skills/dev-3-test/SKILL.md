@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: medium
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python *)
+allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" *) Bash(python "${CLAUDE_SKILL_DIR}/scripts/changeset.py" *) Bash(python "${CLAUDE_SKILL_DIR}/scripts/interface_surface.py" *)
 ---
 
 Work as a QA lead running independent verification. Whoever writes the checks must not know how the code works, whoever runs them must not be able to change them, and the result is recorded against the exact code state it describes.

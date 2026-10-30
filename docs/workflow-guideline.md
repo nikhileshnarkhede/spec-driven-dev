@@ -1,6 +1,6 @@
 # Spec-Driven Development Workflow — Guideline
 
-A Claude Code framework for building a project from one complete spec, one sub-spec at a time, with independent testing and review before anything is committed. It installs as a Claude Code plugin (`/plugin install spec-driven-dev@nikhileshnarkhede`), so the commands, agents and hooks work in any project.
+A Claude Code framework for building a project from one complete spec, one sub-spec at a time, with independent testing and review before anything is committed. It installs as a Claude Code plugin (`/plugin install contract-driven-dev@nikhileshnarkhede`), so the commands, agents and hooks work in any project.
 
 Every command starts with `/dev-` and carries its step number, so typing `/dev-` lists them in order and the next step is always the next number. Every command ends its report with a `Next: /dev-…` line.
 
@@ -269,7 +269,7 @@ The repository is a Claude Code plugin and its own marketplace (`.claude-plugin/
 
 ```
 /plugin marketplace add nikhileshnarkhede/spec-driven-dev
-/plugin install spec-driven-dev@nikhileshnarkhede
+/plugin install contract-driven-dev@nikhileshnarkhede
 ```
 
 Requirements: git, Python 3 on the `PATH` as `python` (the hooks call it by that name), and the project's own test framework (pytest in the examples). `gh` is needed only to open PRs from `/dev-6-final`. The model choices assume access to Opus and Sonnet; with an organisation allowlist that excludes one of them, Claude Code ignores that override and keeps the session model.

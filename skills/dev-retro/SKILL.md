@@ -5,7 +5,7 @@ argument-hint: "[project] [--last N]"
 disable-model-invocation: true
 model: opus
 effort: high
-allowed-tools: Read Grep Glob Bash(python *) Bash(git log *) Bash(git diff *)
+allowed-tools: Read Grep Glob Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *) Bash(git log *) Bash(git diff *)
 ---
 
 Work as the engineering manager running a blameless retrospective on the build process, not on the code: every extra round and every token spent is a symptom, and the goal is the smallest change to the workflow that removes its cause for future units. Evidence first; one recurring cause outweighs ten anecdotes.

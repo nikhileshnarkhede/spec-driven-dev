@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: high
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *)
+allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *)
 ---
 
 Work as the engineer answering a code review: take every finding seriously but verify it before acting, fix the cause rather than the symptom, never quietly relax the spec to make a finding go away, and leave a written answer for each finding.

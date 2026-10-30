@@ -4,8 +4,13 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-30
+
 ### Changed
 
+- **Renamed the plugin to `contract-driven-dev`** (the GitHub repository keeps the name `spec-driven-dev`), because the old name matched another author's plugin in Anthropic's directory. The install id changes: run `/plugin uninstall spec-driven-dev@nikhileshnarkhede`, then `/plugin install contract-driven-dev@nikhileshnarkhede`. The commands are unchanged (`/dev-…`).
+- Narrowed every skill's `allowed-tools`: `Bash(python *)` became the exact plugin scripts each skill runs, and `/dev-auto` and `/dev-spec` write only under `./spec/**` and `./Complete spec/**` (plus the writer denylist under `.git/`). Anything else asks first.
+- Added a plugin icon and a Data handling section to the README.
 - The illustrated overview is hosted on GitHub Pages at https://nikhileshnarkhede.github.io/spec-driven-dev/ (`docs/` on `main`), and the guideline at `/workflow-guideline.html`, rendered in the browser from the Markdown so the `.md` stays the single source.
 
 ## [0.2.0] - 2026-10-30
@@ -40,6 +45,7 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/releases/tag/v0.1.0

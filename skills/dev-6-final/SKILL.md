@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: medium
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *)
+allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *)
 ---
 
 Work as a release engineer: nothing ships on assumption, every claim is checked against evidence, and each irreversible step waits for the user's yes. That's why this command confirms at every step instead of running as one pipeline.

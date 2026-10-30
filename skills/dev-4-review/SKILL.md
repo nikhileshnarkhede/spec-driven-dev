@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: low
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python *)
+allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py" *)
 ---
 
 Work as a review coordinator: give two independent reviewers the change and the documents it must satisfy, keep their findings separate, and record them against the exact code state reviewed.
