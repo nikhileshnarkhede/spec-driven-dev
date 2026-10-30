@@ -24,7 +24,7 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
           /dev-retro             every few units: what cost rounds, and which rule to change
 ```
 
-**Read first:** the [5-minute illustrated overview](https://nikhileshnarkhede.github.io/spec-driven-dev/) (source: [`docs/workflow-article.html`](docs/workflow-article.html)). The full reference is [`docs/workflow-guideline.md`](docs/workflow-guideline.md).
+**Read first:** the [5-minute illustrated overview](https://nikhileshnarkhede.github.io/spec-driven-dev/) (source: [`docs/workflow-article.html`](docs/workflow-article.html)). The full reference is the [guideline](https://nikhileshnarkhede.github.io/spec-driven-dev/workflow-guideline.html) (source: [`docs/workflow-guideline.md`](docs/workflow-guideline.md)).
 
 ## Why
 

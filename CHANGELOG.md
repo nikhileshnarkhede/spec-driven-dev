@@ -6,7 +6,7 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ### Changed
 
-- The illustrated overview is hosted on GitHub Pages at https://nikhileshnarkhede.github.io/spec-driven-dev/ (`docs/` on `main`).
+- The illustrated overview is hosted on GitHub Pages at https://nikhileshnarkhede.github.io/spec-driven-dev/ (`docs/` on `main`), and the guideline at `/workflow-guideline.html`, rendered in the browser from the Markdown so the `.md` stays the single source.
 
 ## [0.2.0] - 2026-10-30
 
