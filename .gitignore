@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+*.bak-*
+
+# Claude Code (no footprint)
+CLAUDE.md
+CLAUDE.local.md
+.claude/

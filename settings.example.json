@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ~/.claude/hooks/checkpoint-reminder.py 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

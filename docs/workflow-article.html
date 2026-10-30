@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Piece at a Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Overpass+Mono:wght@500;600&family=Overpass:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F4F6; --ink:#17202B; --muted:#5B6672; --rule:#C5CED6;
+  --green:#0A7A55; --amber:#C98A00; --red:#C21E32; --blue:#1F5FAF; --violet:#6A42A8;
+  --board:#17202B; --board-fg:#E9EEF2; --board-dim:#8C99A6;
+  --sans:"Overpass","Segoe UI",system-ui,sans-serif;
+  --serif:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"Overpass Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F151C; --ink:#E4EAEF; --muted:#93A0AC; --rule:#2C3742;
+    --green:#2FBF8A; --amber:#F2B53A; --red:#FF5A6A; --blue:#6FA8FF; --violet:#B48CFF;
+    --board:#1A2430; --board-fg:#E9EEF2; --board-dim:#8C99A6;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F151C; --ink:#E4EAEF; --muted:#93A0AC; --rule:#2C3742;
+  --green:#2FBF8A; --amber:#F2B53A; --red:#FF5A6A; --blue:#6FA8FF; --violet:#B48CFF;
+  --board:#1A2430; --board-fg:#E9EEF2; --board-dim:#8C99A6;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased}
+
+/* ── hero ── */
+header{max-width:1000px;margin:0 auto;padding:56px 16px 8px}
+h1{font-family:var(--sans);font-weight:800;font-size:clamp(2.6rem,7vw,4.6rem);line-height:.98;letter-spacing:-.025em;margin:0 0 .35em;max-width:9.5ch}
+.deck{font-size:1.2rem;line-height:1.55;color:var(--muted);max-width:40ch;margin:0}
+.byline{font-family:var(--sans);font-size:15px;color:var(--muted);margin:18px 0 0}
+.byline .links{margin-left:14px}
+.byline .links a{font-weight:600;color:var(--muted);margin-right:12px}
+.byline a{color:var(--ink);font-weight:700;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--amber)}
+.map{margin:36px 0 0}
+.map > svg{width:100%;height:auto;display:block}
+.map .narrow{display:none}
+@media (max-width:700px){ .map .wide{display:none} .map .narrow{display:block;max-width:420px;margin:0 auto} }
+.legend{display:flex;flex-wrap:wrap;gap:8px 28px;font-family:var(--sans);font-size:14px;color:var(--muted);margin:14px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:8px}
+.legend svg{flex:none}
+
+/* ── article ── */
+main{max-width:680px;margin:0 auto;padding:8px 16px 96px}
+h2{font-family:var(--sans);font-weight:800;font-size:1.6rem;line-height:1.2;letter-spacing:-.01em;margin:2.6em 0 .55em}
+p{margin:0 0 1.1em}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.8em;font-weight:500;color:var(--ink);background:color-mix(in srgb,var(--rule) 45%,transparent);padding:.08em .32em;border-radius:3px;white-space:nowrap}
+figure{margin:2em -40px 2.2em}
+@media (max-width:760px){ figure{margin-left:0;margin-right:0} }
+figure .narrow{display:none}
+@media (max-width:700px){ figure .wide{display:none} figure .narrow{display:block;max-width:420px} }
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--muted);margin:.9em 40px 0;max-width:60ch}
+@media (max-width:760px){ figcaption{margin-left:0;margin-right:0} }
+.start{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:15.5px;line-height:1.5;margin:1em 0 2em}
+.start th{width:9.5em;text-align:left;font-weight:700;vertical-align:top;padding:10px 12px 10px 0;border-top:2px solid var(--ink)}
+.start td{padding:10px 0;border-top:2px solid var(--ink)}
+.start tr:last-child th,.start tr:last-child td{border-bottom:2px solid var(--ink)}
+.coda{font-family:var(--sans);font-weight:700;font-size:1.35rem;line-height:1.35;letter-spacing:-.01em;margin:2.4em 0 1em;max-width:30ch}
+.foot{font-family:var(--sans);font-size:14.5px;color:var(--muted)}
+a{color:var(--blue)}
+a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* ── SVG map vocabulary ── */
+svg text{font-family:var(--sans)}
+.nm{font-size:16px;font-weight:700;fill:var(--ink)}
+.nm-s{font-size:14.5px;font-weight:700;fill:var(--ink)}
+.cmd{font-family:var(--mono);font-size:12px;font-weight:500;fill:var(--muted)}
+.sub{font-size:13px;fill:var(--muted)}
+.note{font-size:13px;font-weight:600}
+.num{font-size:13px;font-weight:800;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.num-inv{font-size:13px;font-weight:800;fill:var(--paper);text-anchor:middle;dominant-baseline:central}
+.t{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.g{stroke:var(--green);stroke-width:8}
+.a{stroke:var(--amber);stroke-width:5}
+.r{stroke:var(--red);stroke-width:5}
+.b{stroke:var(--blue);stroke-width:7}
+.v{stroke:var(--violet);stroke-width:7}
+.k{stroke:var(--ink);stroke-width:4;stroke-dasharray:1 9}
+.halo{stroke:var(--paper);stroke-width:15}
+.stn{fill:var(--paper);stroke:var(--ink);stroke-width:4}
+.dec{fill:var(--amber);stroke:var(--ink);stroke-width:4}
+.end{fill:var(--green);stroke:var(--ink);stroke-width:4}
+.stop{fill:var(--red);stroke:var(--ink);stroke-width:4}
+.fa{fill:var(--amber)} .fg{fill:var(--green)} .fr{fill:var(--red)} .fk{fill:var(--ink)}
+.fv{fill:var(--violet)} .fb{fill:var(--blue)}
+.ca{fill:var(--amber)} .cr{fill:var(--red)} .cg{fill:var(--green)}
+.bar{stroke:var(--red);stroke-width:6;stroke-linecap:round}
+.board{fill:var(--board)}
+.bd{font-family:var(--mono);font-size:13px;fill:var(--board-fg)}
+.bd-dim{font-family:var(--mono);font-size:11.5px;fill:var(--board-dim)}
+
+/* one orchestrated moment: the line draws itself */
+@media (prefers-reduced-motion: no-preference){
+  .draw{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 1.3s cubic-bezier(.6,0,.2,1) .25s forwards}
+  .draw-v{stroke-dasharray:700;stroke-dashoffset:700;animation:draw 1.3s cubic-bezier(.6,0,.2,1) .25s forwards}
+  .late{opacity:0;animation:fade .5s ease-out 1.45s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fade{to{opacity:1}}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>One piece at a time</h1>
+  <p class="deck">Building a large ML project from one spec with Claude Code, without letting a single unchecked line onto main.</p>
+  <p class="byline">By <a href="https://nikhileshnarkhede.github.io/portfolio/">Nikhilesh Narkhede</a> <span class="links"><a href="https://github.com/nikhileshnarkhede">GitHub</a> <a href="https://www.linkedin.com/in/nikhileshnarkhede/">LinkedIn</a></span></p>
+
+  <div class="map">
+    <!-- wide map -->
+    <svg class="wide" viewBox="0 0 900 300" role="img" aria-label="Route map: 0 spec and split, then 1 select, 2 write, 3 test, 4 review, 5 fix review, 6 final. Amber routes go back: from test to write when code is missing or wrong, from fix review to test after a fix. A green express route goes from review straight to final when the review is clean.">
+      <defs>
+        <marker id="ha" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ca"/></marker>
+        <marker id="hg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="cg"/></marker>
+      </defs>
+      <!-- main line -->
+      <path class="t k" d="M40,200 L170,200"/>
+      <path class="t g draw" d="M170,200 L820,200"/>
+      <!-- routes back (amber) and express (green) -->
+      <g class="late">
+        <path class="t a" d="M422,186 L422,140 Q422,128 410,128 L312,128 Q300,128 300,140 L300,180" marker-end="url(#ha)"/>
+        <text class="note" x="361" y="118" text-anchor="middle" style="fill:var(--amber)">not built, or wrong</text>
+        <path class="t a" d="M690,184 L690,100 Q690,88 678,88 L450,88 Q438,88 438,100 L438,182" marker-end="url(#ha)"/>
+        <text class="note" x="564" y="78" text-anchor="middle" style="fill:var(--amber)">something fixed: test again</text>
+        <path class="t halo" d="M576,190 L600,166 L786,166 L806,186"/>
+        <path class="t g" style="stroke-width:5" d="M560,200 L594,166 L786,166 L806,186" marker-end="url(#hg)"/>
+        <text class="note" x="748" y="155" text-anchor="middle" style="fill:var(--green)">clean review</text>
+      </g>
+      <!-- stations -->
+      <circle class="stn" cx="40" cy="200" r="14" style="stroke-dasharray:3 4"/><text class="num" x="40" y="201">0</text>
+      <circle class="stn" cx="170" cy="200" r="14"/><text class="num" x="170" y="201">1</text>
+      <circle class="dec" cx="300" cy="200" r="17"/><text class="num" style="fill:#17202B" x="300" y="201">2</text>
+      <circle class="stn" cx="430" cy="200" r="14"/><text class="num" x="430" y="201">3</text>
+      <circle class="stn" cx="560" cy="200" r="14"/><text class="num" x="560" y="201">4</text>
+      <circle class="dec" cx="690" cy="200" r="17"/><text class="num" style="fill:#17202B" x="690" y="201">5</text>
+      <circle class="end" cx="820" cy="200" r="17"/><text class="num-inv" x="820" y="201">6</text>
+      <!-- labels -->
+      <text class="nm" x="40" y="244" text-anchor="middle">Spec, Split</text><text class="cmd" x="40" y="263" text-anchor="middle">once per project</text>
+      <text class="nm" x="170" y="244" text-anchor="middle">Select</text><text class="cmd" x="170" y="263" text-anchor="middle">/dev-1-select</text>
+      <text class="nm" x="300" y="244" text-anchor="middle">Write</text><text class="cmd" x="300" y="263" text-anchor="middle">/dev-2-write</text>
+      <text class="nm" x="430" y="244" text-anchor="middle">Test</text><text class="cmd" x="430" y="263" text-anchor="middle">/dev-3-test</text>
+      <text class="nm" x="560" y="244" text-anchor="middle">Review</text><text class="cmd" x="560" y="263" text-anchor="middle">/dev-4-review</text>
+      <text class="nm" x="690" y="244" text-anchor="middle">Fix review</text><text class="cmd" x="690" y="263" text-anchor="middle">/dev-5-fix-review</text>
+      <text class="nm" x="820" y="244" text-anchor="middle">Final</text><text class="cmd" x="820" y="263" text-anchor="middle">/dev-6-final</text>
+    </svg>
+
+    <!-- narrow map -->
+    <svg class="narrow" viewBox="0 0 360 690" role="img" aria-label="Route map, vertical: 0 spec and split, 1 select, 2 write, 3 test, 4 review, 5 fix review, 6 final, with amber routes back and a green express from review to final.">
+      <defs>
+        <marker id="na" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ca"/></marker>
+        <marker id="ng" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="cg"/></marker>
+      </defs>
+      <path class="t k" d="M130,30 L130,130"/>
+      <path class="t g draw-v" d="M130,130 L130,650"/>
+      <g class="late">
+        <path class="t a" d="M116,332 L104,332 Q96,332 96,324 L96,248 Q96,240 104,240 L110,240" marker-end="url(#na)"/>
+        <path class="t a" d="M116,548 L80,548 Q72,548 72,540 L72,356 Q72,348 80,348 L112,348" marker-end="url(#na)"/>
+        <path class="t halo" d="M116,445 L56,445 Q48,445 48,453 L48,642 Q48,650 56,650 L110,650"/>
+        <path class="t g" style="stroke-width:5" d="M116,445 L56,445 Q48,445 48,453 L48,642 Q48,650 56,650 L110,650" marker-end="url(#ng)"/>
+      </g>
+      <circle class="stn" cx="130" cy="30" r="14" style="stroke-dasharray:3 4"/><text class="num" x="130" y="31">0</text>
+      <circle class="stn" cx="130" cy="130" r="14"/><text class="num" x="130" y="131">1</text>
+      <circle class="dec" cx="130" cy="240" r="17"/><text class="num" style="fill:#17202B" x="130" y="241">2</text>
+      <circle class="stn" cx="130" cy="340" r="14"/><text class="num" x="130" y="341">3</text>
+      <circle class="stn" cx="130" cy="445" r="14"/><text class="num" x="130" y="446">4</text>
+      <circle class="dec" cx="130" cy="548" r="17"/><text class="num" style="fill:#17202B" x="130" y="549">5</text>
+      <circle class="end" cx="130" cy="650" r="17"/><text class="num-inv" x="130" y="651">6</text>
+      <text class="nm" x="164" y="30">Spec, Split</text><text class="cmd" x="164" y="48">once per project</text>
+      <text class="nm" x="164" y="130">Select</text><text class="cmd" x="164" y="148">/dev-1-select</text>
+      <text class="nm" x="164" y="240">Write</text><text class="cmd" x="164" y="258">/dev-2-write</text>
+      <text class="nm" x="164" y="340">Test</text><text class="cmd" x="164" y="358">/dev-3-test</text>
+      <text class="nm" x="164" y="445">Review</text><text class="cmd" x="164" y="463">/dev-4-review</text>
+      <text class="nm" x="164" y="548">Fix review</text><text class="cmd" x="164" y="566">/dev-5-fix-review</text>
+      <text class="nm" x="164" y="650">Final</text><text class="cmd" x="164" y="668">/dev-6-final</text>
+    </svg>
+
+    <ul class="legend">
+      <li><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" class="dec" style="stroke-width:3"/></svg>you decide here</li>
+      <li><svg width="30" height="10" viewBox="0 0 30 10"><path d="M2,5 L28,5" class="t a"/></svg>the only routes back</li>
+      <li><svg width="30" height="10" viewBox="0 0 30 10"><path d="M2,5 L28,5" class="t g" style="stroke-width:5"/></svg>express when the review is clean</li>
+    </ul>
+  </div>
+</header>
+
+<main>
+
+<p>A complete spec for a real ML system runs to dozens of pages: preprocessing, models, losses, calibration, decision logic. Hand all of it to an AI assistant at once and you get a lot of code you can't easily check. The route above is the fix: <strong>cut the spec into small pieces, run each piece down the same line, and let nothing reach main without independent evidence that it does what the spec says.</strong></p>
+
+<p>Each station is a command. They all start with <code>/dev-</code> and carry their step number, so typing <code>/dev-</code> lists them in order. Every command ends by naming the next one, so you never have to remember the route. Before the first station there is <code>/dev-spec</code>, for when you have an idea rather than a spec; after every few pieces there is <code>/dev-retro</code>, which reads what the pieces cost and changes the line itself.</p>
+
+<h2>The spec becomes a departure board</h2>
+<figure>
+<svg viewBox="0 0 600 470" role="img" aria-label="The complete spec is split once into spec/INDEX.md, a board of numbered sub-specs with their dependencies and status. The next row whose dependencies are done goes to step 1.">
+  <path class="t k" d="M40,46 L40,116"/>
+  <circle class="stn" cx="40" cy="34" r="14"/>
+  <text class="nm" x="70" y="32">Complete spec</text>
+  <text class="sub" x="70" y="51">you write it, or /dev-spec writes it from your brainstorm, API protocol first</text>
+  <text class="cmd" x="56" y="94">/dev-0-split, once: word-for-word excerpts, checked by a script</text>
+
+  <rect class="board" x="0" y="122" width="600" height="250" rx="6"/>
+  <text class="bd" x="22" y="152" style="font-weight:600">spec/INDEX.md</text>
+  <text class="bd-dim" x="578" y="152" text-anchor="end">dependencies first</text>
+  <text class="bd-dim" x="22" y="184">#</text><text class="bd-dim" x="60" y="184">sub-spec</text><text class="bd-dim" x="330" y="184">needs</text><text class="bd-dim" x="440" y="184">status</text>
+  <text class="bd" x="22" y="214">01</text><text class="bd" x="60" y="214">preprocessing</text><text class="bd" x="330" y="214">—</text><circle class="fg" cx="446" cy="209" r="6"/><text class="bd" x="462" y="214">done</text>
+  <text class="bd" x="22" y="244">02</text><text class="bd" x="60" y="244">data layer</text><text class="bd" x="330" y="244">01</text><circle class="fg" cx="446" cy="239" r="6"/><text class="bd" x="462" y="244">done</text>
+  <text class="bd" x="22" y="274">03</text><text class="bd" x="60" y="274">model core</text><text class="bd" x="330" y="274">02</text><circle class="fa" cx="446" cy="269" r="6"/><text class="bd" x="462" y="274">in progress</text>
+  <text class="bd" x="22" y="304">04</text><text class="bd" x="60" y="304">loss</text><text class="bd" x="330" y="304">02</text><circle cx="446" cy="299" r="5" style="fill:none;stroke:var(--board-dim);stroke-width:2"/><text class="bd" x="462" y="304">waiting</text>
+  <text class="bd" x="22" y="334">05</text><text class="bd" x="60" y="334">training</text><text class="bd" x="330" y="334">03 04</text><circle cx="446" cy="329" r="5" style="fill:none;stroke:var(--board-dim);stroke-width:2"/><text class="bd" x="462" y="334">waiting</text>
+  <text class="bd-dim" x="60" y="360">… 18 sub-specs in all, each a folder with sub-spec.md and test-report.md</text>
+
+  <path class="t g" d="M40,372 L40,436"/>
+  <circle class="stn" cx="40" cy="440" r="14"/><text class="num" x="40" y="441">1</text>
+  <text class="nm" x="70" y="438">Select</text>
+  <text class="sub" x="70" y="457">the next row whose dependencies are done</text>
+</svg>
+<figcaption>Splitting is the only step that reads the whole spec, so it runs on Opus. A paraphrase would quietly change the requirements for everything downstream, so every excerpt must match the master spec exactly. Rows are numbered so that each one needs only earlier rows, and a script refuses a row with more than 16 acceptance checks.</figcaption>
+</figure>
+
+<p>The board records what each piece needs, so the model can't start before the data layer it consumes is finished. Pieces leave the board one at a time, in dependency order: the most independent piece first, and never a piece whose dependency carries a higher number.</p>
+
+<h2>Every piece gets a contract</h2>
+<figure>
+<svg class="wide" viewBox="0 0 640 330" role="img" aria-label="The sub-spec feeds one interchange, the build contract, which you decide once. Four lines leave it: the implementer builds to its acceptance checks, the test writer writes one test per check, the compliance reviewer treats its decisions as binding, and the pipeline-risk reviewer checks its registered risks first.">
+  <path class="t" style="stroke:var(--ink);stroke-width:7" d="M40,165 L300,165"/>
+  <path class="t g" d="M300,165 L425,40 L470,40"/>
+  <path class="t b" d="M300,165 L340,125 L470,125"/>
+  <path class="t b" d="M300,165 L340,205 L470,205"/>
+  <path class="t v" d="M300,165 L425,290 L470,290"/>
+  <circle class="stn" cx="40" cy="165" r="13"/>
+  <text class="nm-s" x="20" y="124">sub-spec.md</text>
+  <text class="sub" x="20" y="142">requirements, word for word</text>
+  <circle class="dec" cx="215" cy="165" r="21"/>
+  <circle cx="215" cy="165" r="8" style="fill:var(--paper)"/>
+  <text class="nm" x="215" y="211" text-anchor="middle">contract.md</text>
+  <text class="sub" x="215" y="229" text-anchor="middle">decided once, with you</text>
+  <circle class="stn" cx="470" cy="40" r="12" style="stroke:var(--green)"/>
+  <text class="nm-s" x="492" y="37">Implementer</text><text class="sub" x="492" y="55">builds to the checks</text>
+  <circle class="stn" cx="470" cy="125" r="12" style="stroke:var(--blue)"/>
+  <text class="nm-s" x="492" y="122">Test writer</text><text class="sub" x="492" y="140">one test per check, fixtures from its examples</text>
+  <circle class="stn" cx="470" cy="205" r="12" style="stroke:var(--blue)"/>
+  <text class="nm-s" x="492" y="202">Compliance reviewer</text><text class="sub" x="492" y="220">decisions are binding</text>
+  <circle class="stn" cx="470" cy="290" r="12" style="stroke:var(--violet)"/>
+  <text class="nm-s" x="492" y="287">Pipeline-risk reviewer</text><text class="sub" x="492" y="305">registered risks first</text>
+</svg>
+<svg class="narrow" viewBox="0 0 360 470" role="img" aria-label="Vertical version: the sub-spec feeds the build contract, which four readers share: implementer, test writer, compliance reviewer and pipeline-risk reviewer.">
+  <path class="t" style="stroke:var(--ink);stroke-width:7" d="M60,30 L60,442 Q60,450 68,450 L74,450"/>
+  <path class="t g" d="M64,240 L98,240"/>
+  <path class="t b" d="M64,310 L98,310"/>
+  <path class="t b" d="M64,380 L98,380"/>
+  <path class="t v" d="M68,450 L98,450"/>
+  <circle class="stn" cx="60" cy="30" r="13"/>
+  <text class="nm-s" x="90" y="28">sub-spec.md</text><text class="sub" x="90" y="46">requirements, word for word</text>
+  <circle class="dec" cx="60" cy="125" r="21"/>
+  <circle cx="60" cy="125" r="8" style="fill:var(--paper)"/>
+  <text class="nm" x="95" y="122">contract.md</text><text class="sub" x="95" y="140">decided once, with you</text>
+  <circle class="stn" cx="110" cy="240" r="12" style="stroke:var(--green)"/>
+  <text class="nm-s" x="132" y="237">Implementer</text><text class="sub" x="132" y="255">builds to the checks</text>
+  <circle class="stn" cx="110" cy="310" r="12" style="stroke:var(--blue)"/>
+  <text class="nm-s" x="132" y="307">Test writer</text><text class="sub" x="132" y="325">one test per check, fixtures from its examples</text>
+  <circle class="stn" cx="110" cy="380" r="12" style="stroke:var(--blue)"/>
+  <text class="nm-s" x="132" y="377">Compliance reviewer</text><text class="sub" x="132" y="395">decisions are binding</text>
+  <circle class="stn" cx="110" cy="450" r="12" style="stroke:var(--violet)"/>
+  <text class="nm-s" x="132" y="447">Pipeline-risk reviewer</text><text class="sub" x="132" y="465">registered risks first</text>
+</svg>
+<figcaption>Four readers who never talk to each other, reading one settled document instead of each filling the gaps their own way.</figcaption>
+</figure>
+
+<p>Requirements leave choices open: which piece owns a config key, how two sections interact, what a function is called and what it raises. When the implementer, the test writer and the reviewers each settle those choices separately, every mismatch costs a whole implement, test and review round. In one measured run, every item that forced a second round, and both broken tests, came from exactly such open choices.</p>
+<p>So the split now writes a short <strong>build contract</strong> beside each sub-spec. It records who owns what, the open questions and cross-section conflicts settled with you up front, the exact interfaces with one example call each, numbered acceptance checks with literal values, and the risks to design against. It also carries <strong>robustness checks</strong> drawn from the project's hazard register, so stale outputs, missing provenance and bad input are built with the feature rather than in a round after review. A script refuses to start a piece while anything in its contract is still undecided. Pieces are kept small, at around a dozen acceptance checks and never more than 16, because a small piece leaves fewer gaps to guess.</p>
+
+<h2>Two stops are yours</h2>
+<p>Look back at the map. The amber stations are where the line waits for you. At <strong>Write</strong> you approve a plan before any code exists: files, interfaces, tensor shapes, config keys, and a map from every spec statement to the code that will satisfy it. At <strong>Fix review</strong> you answer every finding with <em>fix</em>, <em>accept</em> with a reason, or <em>reject</em> with evidence. Every other station runs by itself.</p>
+<p>The amber lines are the only ways back. A failing test sends the piece to Write for more code. A fix sends it back through Test and Review, because those reports described code that no longer exists. A clean review takes the express to Final.</p>
+
+<h2>Why the tests and reviews can be trusted</h2>
+<figure>
+<svg viewBox="0 0 600 500" role="img" aria-label="Step 3: spec and signatures go to the writer agent, which never sees the code, then to the runner agent, which cannot edit, then to the verification report. Step 4: the full diff branches to two read-only reviewers, spec compliance and pipeline risk, which merge into the review report.">
+  <text class="nm" x="0" y="20">Test</text>
+  <!-- code siding blocked -->
+  <path class="t" style="stroke:var(--muted);stroke-width:5" d="M220,40 L220,112"/>
+  <circle class="stn" cx="220" cy="38" r="10" style="stroke:var(--muted)"/>
+  <text class="sub" x="236" y="42">the code</text>
+  <line class="bar" x1="204" y1="76" x2="236" y2="76"/>
+  <text class="note" x="246" y="81" style="fill:var(--red)">never shown to the writer</text>
+  <!-- step 3 line -->
+  <path class="t b" d="M30,130 L570,130"/>
+  <circle class="stn" cx="30" cy="130" r="13"/>
+  <circle class="stn" cx="220" cy="130" r="13" style="stroke:var(--blue)"/>
+  <circle class="stn" cx="400" cy="130" r="13" style="stroke:var(--blue)"/>
+  <circle class="end" cx="570" cy="130" r="13"/>
+  <text class="nm-s" x="16" y="168">Spec text</text><text class="sub" x="16" y="186">and signatures only</text>
+  <text class="nm-s" x="220" y="168" text-anchor="middle">Writer agent</text><text class="sub" x="220" y="186" text-anchor="middle">derives the tests</text>
+  <text class="nm-s" x="400" y="168" text-anchor="middle">Runner agent</text><text class="sub" x="400" y="186" text-anchor="middle">runs and classifies</text>
+  <line class="bar" x1="378" y1="206" x2="422" y2="206"/>
+  <text class="note" x="400" y="226" text-anchor="middle" style="fill:var(--red)">cannot edit a file</text>
+  <text class="nm-s" x="584" y="168" text-anchor="end">Verification</text><text class="sub" x="584" y="186" text-anchor="end">in test-report.md</text>
+
+  <text class="nm" x="0" y="282">Review</text>
+  <path class="t b" d="M30,380 L80,380 L125,335 L475,335 L520,380 L570,380"/>
+  <path class="t v" d="M80,380 L125,425 L475,425 L520,380"/>
+  <circle class="stn" cx="30" cy="380" r="13"/>
+  <circle class="stn" cx="300" cy="335" r="13" style="stroke:var(--blue)"/>
+  <circle class="stn" cx="300" cy="425" r="13" style="stroke:var(--violet)"/>
+  <circle class="end" cx="570" cy="380" r="13"/>
+  <text class="nm-s" x="16" y="352">Full diff</text>
+  <text class="nm-s" x="300" y="306" text-anchor="middle">Spec-compliance reviewer</text>
+  <text class="sub" x="300" y="365" text-anchor="middle">is every spec line built, missing or quietly relaxed?</text>
+  <text class="nm-s" x="300" y="458" text-anchor="middle">Pipeline-risk reviewer</text>
+  <text class="sub" x="300" y="476" text-anchor="middle">leakage, broken evaluation, nondeterminism, shapes</text>
+  <text class="nm-s" x="584" y="352" text-anchor="end">Review</text>
+  <line class="bar" x1="530" y1="452" x2="574" y2="452"/>
+  <text class="note" x="584" y="478" text-anchor="end" style="fill:var(--red)">both read-only</text>
+</svg>
+<figcaption>Red bars are tool permissions, not polite requests. Blue lines run on Sonnet, the violet line on Opus.</figcaption>
+</figure>
+
+<p>If the person who wrote the code also writes the tests, the tests check what the code does, not what it should do. So the writer agent works from the spec and the function signatures alone. The runner can execute but not edit, so a failing check can't be "fixed" by weakening it. It sorts every failure into one of five classes (<em>not built</em>, <em>wrong behaviour</em>, <em>test defect</em>, <em>spec contradiction</em>, <em>environment</em>), and the class decides where you go next.</p>
+<p>The two reviewers look for different things. One holds every spec statement against the change and returns a verdict per acceptance check. The other is a senior ML reviewer hunting for the silent bugs tests rarely catch, such as data leaking between splits or dropout left on at evaluation. Both have a budget: at most ten and eight findings, and neither reports a limitation the contract already records. Across the first 25 pieces, review had been a third of all tokens, most of it spent on findings everyone already knew about.</p>
+
+<h2>Evidence is checked at the signal</h2>
+<figure>
+<svg viewBox="0 0 600 470" role="img" aria-label="The code has a fingerprint. Verification and review record it. Final recomputes it; when it matches, the signal is green and the change merges. An edit after review changes the fingerprint and the signal turns red until test and review run again.">
+  <defs>
+    <marker id="fr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="cr"/></marker>
+  </defs>
+  <path class="t g" d="M50,30 L50,420"/>
+  <path class="t r" d="M50,262 L428,262 Q440,262 440,274 L440,360" marker-end="url(#fr)"/>
+  <circle class="stn" cx="50" cy="40" r="13"/>
+  <text class="nm-s" x="82" y="38">Code on the branch</text><text class="cmd" x="82" y="57">fingerprint 9ebd5d8e</text>
+  <circle class="stn" cx="50" cy="130" r="13"/>
+  <text class="nm-s" x="82" y="128">Test report</text><text class="cmd" x="82" y="147">recorded at 9ebd5d8e</text>
+  <circle class="stn" cx="50" cy="220" r="13"/>
+  <text class="nm-s" x="82" y="218">Review report</text><text class="cmd" x="82" y="237">recorded at 9ebd5d8e</text>
+  <!-- signal -->
+  <circle class="stn" cx="50" cy="320" r="13"/>
+  <rect x="78" y="300" width="22" height="40" rx="11" class="fk"/><circle cx="89" cy="311" r="6" class="fg"/><circle cx="89" cy="329" r="6" style="fill:var(--muted);opacity:.5"/>
+  <text class="nm-s" x="114" y="318">Final recomputes it</text><text class="cmd" x="114" y="337">9ebd5d8e matches, signal clear</text>
+  <circle class="end" cx="50" cy="420" r="16"/>
+  <text class="nm" x="82" y="425">Commit and merge</text>
+
+  <circle class="stn" cx="300" cy="262" r="11" style="stroke:var(--red)"/>
+  <text class="nm-s" x="318" y="250">a "small fix" after review</text>
+  <text class="cmd" x="318" y="284">now c3d4a1f0</text>
+  <circle class="stop" cx="440" cy="380" r="16"/>
+  <text class="nm-s" x="440" y="420" text-anchor="middle">Blocked</text>
+  <text class="sub" x="440" y="438" text-anchor="middle">run Test and Review again</text>
+</svg>
+<figcaption>A report is only valid for the exact code it checked.</figcaption>
+</figure>
+
+<p>Every report records a fingerprint of the code it checked: committed, uncommitted and new files together. Before committing, Final recomputes that fingerprint and re-runs the tests. A harmless-looking edit made after review changes the fingerprint, and the signal stays red until the reports catch up. Commit, push, merge and branch deletion each still wait for your yes, and no commit message or PR credits an AI tool.</p>
+
+<h2>Opus where it decides correctness</h2>
+<figure>
+<svg viewBox="0 0 600 250" role="img" aria-label="Stations coloured by model: Spec, Split and Write on Opus, the rest on the Sonnet session model; agents: writer, runner and compliance on Sonnet, pipeline risk on Opus at high; the retro on Opus.">
+  <circle cx="10" cy="14" r="7" class="fv"/><text class="note" x="24" y="19" style="fill:var(--violet)">Opus</text>
+  <circle cx="90" cy="14" r="7" class="fb"/><text class="note" x="104" y="19" style="fill:var(--blue)">Sonnet, your session model</text>
+  <path class="t" style="stroke:var(--rule);stroke-width:6" d="M40,60 L560,60"/>
+  <circle cx="40" cy="60" r="15" class="fv"/><text class="num-inv" x="40" y="61">0</text>
+  <circle cx="127" cy="60" r="15" class="fb"/><text class="num-inv" x="127" y="61">1</text>
+  <circle cx="213" cy="60" r="15" class="fv"/><text class="num-inv" x="213" y="61">2</text>
+  <circle cx="300" cy="60" r="15" class="fb"/><text class="num-inv" x="300" y="61">3</text>
+  <circle cx="387" cy="60" r="15" class="fb"/><text class="num-inv" x="387" y="61">4</text>
+  <circle cx="473" cy="60" r="15" class="fb"/><text class="num-inv" x="473" y="61">5</text>
+  <circle cx="560" cy="60" r="15" class="fb"/><text class="num-inv" x="560" y="61">6</text>
+  <text class="nm-s" x="40" y="100" text-anchor="middle">Spec, Split</text><text class="cmd" x="40" y="118" text-anchor="middle">high, xhigh</text>
+  <text class="nm-s" x="127" y="100" text-anchor="middle">Select</text><text class="cmd" x="127" y="118" text-anchor="middle">low</text>
+  <text class="nm-s" x="213" y="100" text-anchor="middle">Write</text><text class="cmd" x="213" y="118" text-anchor="middle">high</text>
+  <text class="nm-s" x="300" y="100" text-anchor="middle">Test</text><text class="cmd" x="300" y="118" text-anchor="middle">medium</text>
+  <text class="nm-s" x="387" y="100" text-anchor="middle">Review</text><text class="cmd" x="387" y="118" text-anchor="middle">low</text>
+  <text class="nm-s" x="473" y="100" text-anchor="middle">Fix</text><text class="cmd" x="473" y="118" text-anchor="middle">high</text>
+  <text class="nm-s" x="560" y="100" text-anchor="middle">Final</text><text class="cmd" x="560" y="118" text-anchor="middle">medium</text>
+
+  <text class="sub" x="0" y="170">Agents run on their own models:</text>
+  <circle cx="10" cy="200" r="7" class="fb"/><text class="sub" x="24" y="205">test writer, high</text>
+  <circle cx="160" cy="200" r="7" class="fb"/><text class="sub" x="174" y="205">test runner, medium</text>
+  <circle cx="330" cy="200" r="7" class="fb"/><text class="sub" x="344" y="205">compliance reviewer, medium</text>
+  <circle cx="10" cy="232" r="7" class="fv"/><text class="sub" x="24" y="237">pipeline-risk reviewer, high</text>
+  <circle cx="330" cy="232" r="7" class="fv"/><text class="sub" x="344" y="237">retro, high</text>
+</svg>
+<figcaption>Numbers under each station are the effort level. The model switches only at the violet stations, which sit early in a session.</figcaption>
+</figure>
+
+<p>Switching models mid-session re-reads the whole conversation without the prompt cache, so the Opus steps sit where the session is still short: Spec and Split run once, and Write comes right after Select. Agents run on their own models without touching yours. Effort follows the Claude Code guidance: high where edge cases matter, low where a step is procedural, and never <code>max</code>, which the docs warn tends to overthink. The pipeline reviewer came down from xhigh to high after the ledger showed the deepest setting fixing 18 of 104 findings at a quarter of all tokens.</p>
+
+<h2>Or let it run unattended</h2>
+<figure>
+<svg viewBox="0 0 600 540" role="img" aria-label="/dev-auto: after Select, round 1 builds on Sonnet, round 2 fixes on Sonnet, round 3 fixes on Sonnet, or on Opus only for defects round 2 could not close. Each round can exit to Ready for Final, which you run; hardening beyond the contract is offered to you once at the end. If work is still left after round 3, it stops and reports.">
+  <defs>
+    <marker id="xa" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ca"/></marker>
+    <marker id="xg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="cg"/></marker>
+  </defs>
+  <!-- spine -->
+  <path class="t k" d="M60,40 L60,128"/>
+  <path class="t a" d="M60,148 L60,230" marker-end="url(#xa)"/>
+  <path class="t a" d="M60,258 L60,340" marker-end="url(#xa)"/>
+  <path class="t a" d="M60,368 L60,448" marker-end="url(#xa)"/>
+  <text class="note" x="74" y="198" style="fill:var(--amber)">work left</text>
+  <text class="note" x="74" y="308" style="fill:var(--amber)">still left</text>
+  <text class="note" x="74" y="418" style="fill:var(--amber)">still left</text>
+  <!-- exits to done -->
+  <path class="t g" style="stroke-width:5" d="M70,148 L98,176 L520,176 L520,452" marker-end="url(#xg)"/>
+  <path class="t g" style="stroke-width:5" d="M70,258 L98,286 L506,286"/>
+  <path class="t g" style="stroke-width:5" d="M70,368 L98,396 L506,396"/>
+  <text class="note" x="420" y="168" text-anchor="middle" style="fill:var(--green)">nothing left</text>
+  <!-- stations -->
+  <circle class="stn" cx="60" cy="30" r="14"/><text class="num" x="60" y="31">1</text>
+  <text class="nm" x="90" y="28">Select</text><text class="cmd" x="90" y="46">/dev-auto NN</text>
+  <circle cx="60" cy="138" r="15" class="fb"/><text class="num-inv" x="60" y="139">R1</text>
+  <text class="nm" x="90" y="128">Round 1: build</text><text class="sub" x="90" y="147">on Sonnet, high: implement, test, review*, decide</text>
+  <circle cx="60" cy="248" r="15" class="fb"/><text class="num-inv" x="60" y="249">R2</text>
+  <text class="nm" x="90" y="238">Round 2: fix</text><text class="sub" x="90" y="257">on Sonnet, high: the same loop on what's left</text>
+  <circle cx="60" cy="358" r="15" class="fv"/><text class="num-inv" x="60" y="359">R3</text>
+  <text class="nm" x="90" y="348">Round 3: fix again</text><text class="sub" x="90" y="367">Sonnet; Opus xhigh only for defects round 2 couldn't close</text>
+  <circle class="stop" cx="60" cy="466" r="16"/>
+  <text class="nm-s" x="60" y="503" text-anchor="middle">Stops and reports</text>
+  <circle class="end" cx="520" cy="466" r="16"/>
+  <text class="nm-s" x="520" y="503" text-anchor="middle">Ready for Final</text>
+  <text class="sub" x="520" y="521" text-anchor="middle">hardening candidates: one question to you</text>
+</svg>
+<figcaption>* Review runs only once every test passes. Final, which commits, pushes and merges, always stays with you.</figcaption>
+</figure>
+
+<p>When you'd rather not sit through steps 1 to 5, <code>/dev-auto NN</code> runs them for you in up to three rounds. An implementer agent builds the piece, the same independent tests and reviewers check it, and the command decides each finding by fixed rules: confirmed bugs of medium severity or worse are fixed, minor ones are fixed or accepted with a reason, and false alarms are rejected with evidence. Open questions get the reading most faithful to the spec, logged as an assumption for you to confirm.</p>
+<p>All three rounds run on Sonnet unless round 2 leaves failing checks or confirmed defects; only then does round 3 switch to Opus at its deepest setting, with at most five items per launch. Hardening the reviewers suggest beyond the contract isn't fixed round by round: it is collected and offered to you once, at the end, and anything the hazard register should have covered is noted for the next retro. Later rounds use a focused re-review that checks the fixes and the changed code, not the whole change again. A hook stops the implementer from touching the independent tests, the run refuses to start while the contract has an open decision, because that decision is yours, and it refuses a session that already carries other work, because every one of its own calls re-reads the whole conversation. The run ends at <strong>Ready for Final</strong> with a short audit of every decision it made on your behalf.</p>
+
+<h2>The line keeps its own log</h2>
+<figure>
+<svg viewBox="0 0 600 420" role="img" aria-label="Final writes one row per finished piece into a ledger board: rounds, first test run, cost by role. Every few pieces, /dev-retro reads the board and proposes changes to the commands, which you approve.">
+  <defs><marker id="la" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ca"/></marker></defs>
+  <rect class="board" x="0" y="0" width="600" height="250" rx="6"/>
+  <text class="bd" x="22" y="30" style="font-weight:600">~/.claude/workflow-metrics/LEDGER.md</text>
+  <text class="bd-dim" x="578" y="30" text-anchor="end">one row per finished piece</text>
+  <text class="bd-dim" x="22" y="62">#</text><text class="bd-dim" x="60" y="62">rounds</text><text class="bd-dim" x="140" y="62">first test run</text><text class="bd-dim" x="300" y="62">why the extra rounds</text><text class="bd-dim" x="520" y="62">cost</text>
+  <text class="bd" x="22" y="92">06</text><text class="bd" x="60" y="92">3</text><text class="bd" x="140" y="92">66 / 0 / 0</text><text class="bd" x="300" y="92">hardening ×2, fix-introduced bug</text><text class="bd" x="520" y="92">8.5M</text>
+  <text class="bd" x="22" y="122">07a</text><text class="bd" x="60" y="122">2</text><text class="bd" x="140" y="122">110 / 6 / 0</text><text class="bd" x="300" y="122">hardening (user-chosen)</text><text class="bd" x="520" y="122">2.1M</text>
+  <text class="bd" x="22" y="152">15b</text><text class="bd" x="60" y="152">3</text><text class="bd" x="140" y="152">121 / 11 / 37</text><text class="bd" x="300" y="152">48 fixture misreads; locked tests</text><text class="bd" x="520" y="152">9.5M</text>
+  <text class="bd" x="22" y="182">19</text><text class="bd" x="60" y="182">4</text><text class="bd" x="140" y="182">87 / 16 / 0</text><text class="bd" x="300" y="182">1,894 lines; Opus fix round 5.6M</text><text class="bd" x="520" y="182">15.8M</text>
+  <text class="bd-dim" x="60" y="222">… plus cost by role, model and effort, reviewer yield, and what escaped review</text>
+
+  <path class="t k" d="M40,250 L40,330"/>
+  <path class="t a" d="M60,370 L540,370 Q560,370 560,350 L560,272" marker-end="url(#la)"/>
+  <circle class="dec" cx="40" cy="370" r="17"/>
+  <text class="nm" x="70" y="366">Retro</text><text class="cmd" x="70" y="384">/dev-retro, every few pieces</text>
+  <text class="note" x="300" y="398" text-anchor="middle" style="fill:var(--amber)">proposes changes to the commands; you approve each; the next rows show whether they worked</text>
+</svg>
+<figcaption>The ledger reads the session transcripts, so the numbers are measured, not reported. Cost is in relative units weighted by model price.</figcaption>
+</figure>
+
+<p>Every finished piece leaves a row: how many rounds it took, how its first independent test run went, why each extra round happened, and what every agent cost. The first 25 pieces taught three things. Once contracts existed, verification was nearly one-pass; the extra rounds came from review findings and from a hardening round chosen after review almost every time; and three oversized pieces took a third of all tokens. The rules in this article (robustness checks in the contract, reviewer budgets, the hard size cap, dependency-ordered numbering) came out of that record, and <code>/dev-retro</code> is how the next ones will.</p>
+
+<h2>Start</h2>
+<table class="start">
+  <tr><th>Once per repo</th><td><code>/no-claude-footprint</code>, then put your spec in <code>Complete spec/</code>, or run <code>/dev-spec</code> to write it from a brainstorm</td></tr>
+  <tr><th>Once per project</th><td><code>/dev-0-split</code></td></tr>
+  <tr><th>For each piece</th><td><code>/dev-1-select NN</code>, then follow the <code>Next:</code> line each command prints</td></tr>
+  <tr><th>Hands-off</th><td><code>/dev-auto NN</code> in auto mode, then <code>/dev-6-final NN</code> once you have read its report</td></tr>
+  <tr><th>When you stop</th><td><code>/dev-save</code>; next time, run the command on its <code>Resume:</code> line</td></tr>
+  <tr><th>Every few pieces</th><td><code>/dev-retro</code>: what cost rounds, and which rule to change</td></tr>
+</table>
+
+<p class="coda">Small pieces, independent evidence, and a written answer for every finding. Slower per line than "just generate it", and far faster per line you can trust.</p>
+
+<p class="foot">Every command, agent, script and rule is described in <code>workflow-guideline.md</code>, next to this file.</p>
+<p class="foot">Written by Nikhilesh Narkhede: <a href="https://nikhileshnarkhede.github.io/portfolio/">portfolio</a>, <a href="https://github.com/nikhileshnarkhede">GitHub</a>, <a href="https://www.linkedin.com/in/nikhileshnarkhede/">LinkedIn</a>.</p>
+</main>
+</body>
+</html>
