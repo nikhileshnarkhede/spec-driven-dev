@@ -1,0 +1,3 @@
+# Store LF in the repository and check out LF on every platform, so install.sh,
+# the hooks and the scripts run unchanged wherever the repo is cloned.
+* text=auto eol=lf
