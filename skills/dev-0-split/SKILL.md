@@ -121,8 +121,8 @@ Keep contracts short and plain: the fewest words that leave nothing to guess. A 
 ## 6. Verify
 
 ```
-python "${CLAUDE_SKILL_DIR}/scripts/check_fidelity.py" "<master spec path>" spec
-python "${CLAUDE_SKILL_DIR}/scripts/check_contracts.py" spec --stage split
+python "${CLAUDE_PLUGIN_ROOT}/skills/dev-0-split/scripts/check_fidelity.py" "<master spec path>" spec
+python "${CLAUDE_PLUGIN_ROOT}/skills/dev-0-split/scripts/check_contracts.py" spec --stage split
 ```
 
 The first checks that every excerpt is an exact substring of the master spec and lists master text no sub-spec covers (new split, or after a lettered split in upgrade mode). Re-copy every `NOT VERBATIM` excerpt and re-run until it reports no problems; then read each uncovered range — anything stating a requirement must land in a sub-spec.

@@ -5,7 +5,7 @@ argument-hint: "[project name | notes file]"
 disable-model-invocation: true
 model: opus
 effort: high
-allowed-tools: Read Grep Glob Write(./Complete spec/**) Edit(./Complete spec/**) Bash(git status *) Bash(git log *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py" *)
+allowed-tools: Read Grep Glob Write(./Complete spec/**) Edit(./Complete spec/**) Bash(git status:*) Bash(git log:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py:*)
 ---
 
 Work as the architect who writes the document a team will build from without talking to you again: every interface named, every value literal, every section small enough to build and verify in one pass. `/dev-0-split` will cut this spec into sub-specs by its sections and fix contract interfaces from the API protocol, so what is vague here becomes an extra round there. The user stays in control: each stage ends with a checkpoint and a confirmation before the next starts, and nothing here writes code.
@@ -14,7 +14,7 @@ Input: $ARGUMENTS — a project name, a path to brainstorm notes, or nothing (th
 
 ## 1. Gather
 
-Read the notes if a file was given, `README.md`, `CLAUDE.md`/`CLAUDE.local.md`, and any existing code's public surface (`python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py" <files>`) so the protocol reuses what exists. Then interview in AskUserQuestion batches (up to 4 questions each, 2–4 options, your recommendation first), until nothing below is open:
+Read the notes if a file was given, `README.md`, `CLAUDE.md`/`CLAUDE.local.md`, and any existing code's public surface (`python "${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py" <files>`) so the protocol reuses what exists. Then interview in AskUserQuestion batches (up to 4 questions each, 2–4 options, your recommendation first), until nothing below is open:
 - purpose, users and the one result that makes the project a success;
 - inputs and outputs: data sources, formats, sizes, labels, what arrives live;
 - the components and the flow between them, in the user's words;

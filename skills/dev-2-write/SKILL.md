@@ -39,7 +39,7 @@ Show a short plan:
 
 Ask for approval through AskUserQuestion. On changes, revise and ask again. Then write the approved interfaces into `contract.md` and run:
 ```
-python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" spec --unit NN --stage test
+python "${CLAUDE_PLUGIN_ROOT}/skills/dev-0-split/scripts/check_contracts.py" spec --unit NN --stage test
 ```
 It must pass before any code is written, because the test writer builds its checks from these interfaces.
 

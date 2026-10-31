@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: high
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *)
+allowed-tools: Bash(git status:*) Bash(git log:*) Bash(git diff:*) Bash(git branch --show-current) Bash(git rev-parse:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/usage_ledger.py:*)
 ---
 
 Work as the engineer answering a code review: take every finding seriously but verify it before acting, fix the cause rather than the symptom, never quietly relax the spec to make a finding go away, and leave a written answer for each finding.
@@ -26,7 +26,7 @@ Reviewers read a diff without running anything, so some findings are wrong. For 
 - **not a defect** — the reviewer misread the code or the spec; cite the evidence. Code that follows a contract decision is not a defect for disagreeing with it; cite the decision (`D<n>`).
 - **spec question** — the code matches one reading of something neither the spec nor the contract settles; this is a decision for the user, not a code change. Once decided, it goes into the contract's `## Late decisions`.
 
-When a **confirmed** finding is a defect in an earlier, already-closed unit's code (or its contract), log it so review misses are counted: `python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" escaped --unit <earlier unit> --found-in NN --kind defect --note "<one line>"`. Likewise when this unit's contract forces an edit to an earlier unit's locked files, log it with `--kind coupling`.
+When a **confirmed** finding is a defect in an earlier, already-closed unit's code (or its contract), log it so review misses are counted: `python "${CLAUDE_PLUGIN_ROOT}/scripts/usage_ledger.py" escaped --unit <earlier unit> --found-in NN --kind defect --note "<one line>"`. Likewise when this unit's contract forces an edit to an earlier unit's locked files, log it with `--kind coupling`.
 
 Where a finding claims a runtime behaviour (a shape, a leak, a NaN), prove or disprove it with a short script in the scratchpad rather than by reasoning alone.
 

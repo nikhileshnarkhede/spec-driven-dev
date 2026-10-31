@@ -5,12 +5,12 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: low
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py" *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/interface_surface.py" *)
+allowed-tools: Bash(git status:*) Bash(git log:*) Bash(git diff:*) Bash(git branch --show-current) Bash(git rev-parse:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/changeset.py:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py:*)
 ---
 
 Work as a review coordinator: give two independent reviewers the change and the documents it must satisfy, keep their findings separate, and record them against the exact code state reviewed.
 
-Sub-spec: $ARGUMENTS (if empty, ask which one). Run everything from the repository root. `CS` below stands for `python "${CLAUDE_SKILL_DIR}/../dev-3-test/scripts/changeset.py"`.
+Sub-spec: $ARGUMENTS (if empty, ask which one). Run everything from the repository root. `CS` below stands for `python "${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/changeset.py"`.
 
 ## 1. Full review or focused re-review
 

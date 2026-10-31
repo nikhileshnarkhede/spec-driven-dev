@@ -5,7 +5,7 @@ argument-hint: "[project] [--last N]"
 disable-model-invocation: true
 model: opus
 effort: high
-allowed-tools: Read Grep Glob Bash(python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" *) Bash(git log *) Bash(git diff *)
+allowed-tools: Read Grep Glob Bash(git log:*) Bash(git diff:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/usage_ledger.py:*)
 ---
 
 Work as the engineering manager running a blameless retrospective on the build process, not on the code: every extra round and every token spent is a symptom, and the goal is the smallest change to the workflow that removes its cause for future units. Evidence first; one recurring cause outweighs ten anecdotes.
@@ -14,7 +14,7 @@ Arguments: $ARGUMENTS — optional project name (default: all projects in the le
 
 ## 1. Load the evidence
 
-- `python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" render`, then read `~/.claude/workflow-metrics/LEDGER.md`, `ledger.jsonl` and `CHANGES.md`.
+- `python "${CLAUDE_PLUGIN_ROOT}/scripts/usage_ledger.py" render`, then read `~/.claude/workflow-metrics/LEDGER.md`, `ledger.jsonl` and `CHANGES.md`.
 - For each unit in scope, read its `spec/NN-*/test-report.md` (`## Verification`, `## Review`, `## Review resolutions`, `## Autonomous run`) and the late decisions in its `contract.md`. The project folder is the repo whose name matches the ledger's project; ask if you can't find it.
 
 ## 2. Find the causes
@@ -49,7 +49,7 @@ Edit the workflow's source checkout — the repository this plugin was installed
 
 ## 4b. Log this retro's own cost
 
-`python "${CLAUDE_SKILL_DIR}/../../scripts/usage_ledger.py" record --repo . --unit retro-<YYYY-MM-DD> --kind retro --since <time you started, UTC ISO> --note "<changes applied or none>"`. The ledger's table of non-unit sessions (stopped runs, selects, retros) is what `/dev-retro` should read next time, so overhead outside units is counted too.
+`python "${CLAUDE_PLUGIN_ROOT}/scripts/usage_ledger.py" record --repo . --unit retro-<YYYY-MM-DD> --kind retro --since <time you started, UTC ISO> --note "<changes applied or none>"`. The ledger's table of non-unit sessions (stopped runs, selects, retros) is what `/dev-retro` should read next time, so overhead outside units is counted too.
 
 ## 5. Report
 

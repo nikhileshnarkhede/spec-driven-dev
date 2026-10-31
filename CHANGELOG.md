@@ -4,6 +4,12 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-31
+
+### Changed
+
+- Skills run their scripts through `${CLAUDE_PLUGIN_ROOT}` instead of paths relative to the skill folder, and every `allowed-tools` rule uses the exact `command:*` form, naming each script file with no relative path or wildcard in it. Read-only `git branch` is narrowed to `git branch --show-current`. Requested by the plugin directory's policy check.
+
 ## [0.3.0] - 2026-10-30
 
 ### Changed
@@ -45,7 +51,8 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/releases/tag/v0.1.0

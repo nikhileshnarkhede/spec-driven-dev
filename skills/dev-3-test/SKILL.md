@@ -5,7 +5,7 @@ argument-hint: "<NN>"
 disable-model-invocation: true
 model: inherit
 effort: medium
-allowed-tools: Bash(git status *) Bash(git log *) Bash(git diff *) Bash(git branch *) Bash(git rev-parse *) Bash(python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" *) Bash(python "${CLAUDE_SKILL_DIR}/scripts/changeset.py" *) Bash(python "${CLAUDE_SKILL_DIR}/scripts/interface_surface.py" *)
+allowed-tools: Bash(git status:*) Bash(git log:*) Bash(git diff:*) Bash(git branch --show-current) Bash(git rev-parse:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-0-split/scripts/check_contracts.py:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/changeset.py:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py:*)
 ---
 
 Work as a QA lead running independent verification. Whoever writes the checks must not know how the code works, whoever runs them must not be able to change them, and the result is recorded against the exact code state it describes.
@@ -16,18 +16,18 @@ Sub-spec: $ARGUMENTS (if empty, ask which one). Run everything from the reposito
 
 1. Read `spec/NN-*/sub-spec.md` and `spec/NN-*/contract.md`. If the contract exists, it must pass:
    ```
-   python "${CLAUDE_SKILL_DIR}/../dev-0-split/scripts/check_contracts.py" spec --unit NN --stage test
+   python "${CLAUDE_PLUGIN_ROOT}/skills/dev-0-split/scripts/check_contracts.py" spec --unit NN --stage test
    ```
    If it fails, stop and show the errors: the writer needs fixed interfaces and settled decisions, otherwise its checks are guesses. (`/dev-2-write NN` fixes the interfaces.)
 2. Compute the change set — everything this branch changed since it left the main branch, committed or not, new untracked files included:
    ```
-   python "${CLAUDE_SKILL_DIR}/scripts/changeset.py"
+   python "${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/changeset.py"
    ```
 3. Work out the project's test setup with Glob and Read: the test directory that serves the code in the change set (where `conftest.py` or existing `test_*.py` files live), the framework, its import conventions, and the exact command that runs a single test file from the right working directory. Ask only if it's genuinely ambiguous.
 4. The verification file is `<test dir>/test_subspec_NN_<slug_with_underscores>.py`.
 5. Extract the interface surface — signatures only, no bodies or constant values — of the change set's non-test Python files:
    ```
-   python "${CLAUDE_SKILL_DIR}/scripts/interface_surface.py" <files>
+   python "${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py" <files>
    ```
    For other languages, collect declaration lines with Grep instead.
 

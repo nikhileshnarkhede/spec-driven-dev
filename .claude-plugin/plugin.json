@@ -1,7 +1,7 @@
 {
   "name": "contract-driven-dev",
   "displayName": "Contract-Driven Dev",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "icon": "./.claude-plugin/icon.png",
   "description": "Build a project from one complete spec, one sub-spec at a time: build contracts, an independent test writer and runner, two read-only reviewers, an unattended loop, and a usage ledger the workflow learns from.",
   "author": {
