@@ -4,6 +4,12 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-10-31
+
+### Changed
+
+- `/dev-auto` no longer pre-approves `pytest` or `python -m pytest`: a wildcard after a test runner lets any command through, and the test runs happen in the runner agent anyway. `/dev-spec` no longer pre-approves file writes; you approve the two files it writes. Requested by the plugin directory's policy check.
+
 ## [0.3.1] - 2026-10-31
 
 ### Changed
@@ -51,7 +57,8 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.1.0...v0.2.0

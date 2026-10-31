@@ -5,7 +5,7 @@ argument-hint: "[project name | notes file]"
 disable-model-invocation: true
 model: opus
 effort: high
-allowed-tools: Read Grep Glob Write(./Complete spec/**) Edit(./Complete spec/**) Bash(git status:*) Bash(git log:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py:*)
+allowed-tools: Read Grep Glob Bash(git status:*) Bash(git log:*) Bash(python ${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/interface_surface.py:*)
 ---
 
 Work as the architect who writes the document a team will build from without talking to you again: every interface named, every value literal, every section small enough to build and verify in one pass. `/dev-0-split` will cut this spec into sub-specs by its sections and fix contract interfaces from the API protocol, so what is vague here becomes an extra round there. The user stays in control: each stage ends with a checkpoint and a confirmation before the next starts, and nothing here writes code.

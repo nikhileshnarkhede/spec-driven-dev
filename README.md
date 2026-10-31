@@ -91,7 +91,7 @@ Nothing leaves your machine. The plugin makes no network calls, reads no credent
 - **Hooks** (`hooks/`): three local Python scripts. Two guards inspect the file path of a Read, Grep, Write or Edit call to keep the test writer away from the code under test and implementers away from the verification file; the Stop hook checks the age of `CLAUDE.local.md` and `git status`. They store nothing.
 - **Git**: the commands run `git` in your repository, and `gh` or `git push` only when you confirm it in `/dev-6-final`.
 - **Usage ledger** (`scripts/usage_ledger.py`): reads the Claude Code session transcripts under `~/.claude/projects/` for token counts, model names, timestamps and agent names, plus `git log` and `git diff --numstat` of your repository, and writes the result to `~/.claude/workflow-metrics/`. It never reads message text for anything but slash-command names and arguments, and nothing is sent anywhere.
-- **Files written in your project**: `spec/` (sub-specs, contracts, test reports, the handoff ledger), the code and tests you approve, `CLAUDE.local.md` (a private log you keep gitignored), and `.git/verification-writer-denylist` while a test run is in progress.
+- **Files written in your project**: `Complete spec/` (by `/dev-spec`, with your approval), `spec/` (sub-specs, contracts, test reports, the handoff ledger), the code and tests you approve, `CLAUDE.local.md` (a private log you keep gitignored), and `.git/verification-writer-denylist` while a test run is in progress.
 
 ## Notes
 
