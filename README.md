@@ -2,7 +2,7 @@
 
 Build a large project from one complete spec with [Claude Code](https://code.claude.com), one piece at a time. No piece reaches `main` without independent evidence that it does what the spec says.
 
-A Claude Code plugin: ten slash commands, seven agents, three hooks and a usage ledger. Commands share the `/dev-` prefix and carry a step number, so typing `/dev-` lists them in order, and every command ends by printing the next one to run. The ledger records what every unit cost and why it needed each round, and `/dev-retro` turns that record into changes to the workflow itself.
+A Claude Code plugin: eleven slash commands (plus the optional `/no-claude-footprint`), seven agents, three hooks and a usage ledger. Commands share the `/dev-` prefix and carry a step number, so typing `/dev-` lists them in order, and every command ends by printing the next one to run. The ledger records what every unit cost and why it needed each round, and `/dev-retro` turns that record into changes to the workflow itself.
 
 ```
 Brainstorm ───/dev-spec──────► Complete spec/<name>.md + <name>-api-protocol.md
@@ -28,18 +28,13 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 
 ## Why
 
-- **Small pieces.** The spec is split into small sub-specs, each a word-for-word excerpt checked by a script, with dependencies tracked in an index.
-- **Decide before you build.** Each sub-spec gets a build contract: ownership of every config key, the open questions and cross-section conflicts settled with you, exact interfaces, numbered acceptance checks and the risks to design against. The implementer, the test writer and both reviewers read the same contract, so they don't each guess differently. That mismatch is what usually forces a second round. A script checks every contract is complete before work starts.
-- **Plan before code.** `/dev-2-write` writes nothing until you approve the interfaces and a plan mapping every acceptance check to the code.
-- **Independent verification.** The test writer works from the spec and contract only, and a hook refuses its reads of the changed files. The runner can execute but not edit. Both reviewers are read-only with no shell. These limits are enforced by tool permissions and hooks, not just instructions.
-- **Evidence over claims.** Each report records a fingerprint of the exact code it checked. `/dev-6-final` refuses to commit if the code changed afterwards.
-- **Every finding gets an answer.** Each review finding is fixed, accepted with a reason, or rejected with evidence, and the answer is recorded. Obligations it leaves for later units go into a handoff ledger that those units must close.
-- **Cheaper later rounds.** After fixes, a focused re-review checks the fixed findings and what changed since the last review instead of the whole change again.
-- **Right model per step.** Opus for splitting, writing and the ML pipeline review; the session model elsewhere, with effort sized to each step.
-- **Robustness is built in, not bolted on.** Each contract carries robustness checks derived from the project's hazard register, so hardening lands in round 1 instead of a third round after review.
-- **Small units, enforced.** The contract check refuses more than 16 acceptance checks or 700 estimated source lines per unit, with no override, and refuses an index whose unit depends on a later-numbered one: units are numbered in dependency order, most independent first.
-- **One environment.** The project ships a container (a pinned Dockerfile built from a lock file, code copied in through an allow-list, data mounted read-only, no network) and both the test suite and the application run in it. Test counts name the image they came from, every skip carries its reason, and the conventions forbid tests that read the machine instead of the artifact.
-- **It learns from its own record.** `/dev-6-final` writes every finished unit to a global ledger (cost by role, model and effort; rounds; first-run failures by class; reviewer yield; escapes). `/dev-retro` reads it and proposes the smallest workflow change that removes a recurring cause; each change is logged with the evidence and the units to check it against.
+- **Decide before you build.** Each sub-spec gets a build contract (config-key ownership, settled decisions, exact interfaces, numbered acceptance checks, risks), and a script refuses to start a unit whose contract is incomplete or too big. Implementer, test writer and both reviewers read the same contract, so they don't each guess differently.
+- **Independent verification.** The test writer works from the spec and contract only; the runner can execute but not edit; both reviewers are read-only. Tool permissions and hooks enforce this, not just instructions.
+- **Evidence over claims.** Reports carry a fingerprint of the code they checked, and `/dev-6-final` refuses to commit if the code changed afterwards. Every review finding is fixed, accepted with a reason or rejected with evidence.
+- **One environment.** The suite and the application run in the project's container; counts name the image and every skip carries its reason.
+- **It learns from its own record.** A usage ledger records what every unit cost and why it needed each round, and `/dev-retro` proposes the smallest workflow change that removes a recurring cause.
+
+The full list of rules is section 8 of the guideline.
 
 ## Contents
 
@@ -58,11 +53,11 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 
 ## Unattended mode
 
-`/dev-auto NN` runs select → implement → test → review → fix for one sub-spec in up to three rounds, without asking you anything. The implementer is Sonnet at high effort; Opus at xhigh is used only in round 3 and only for failing checks or confirmed defects the second round couldn't close. Hardening beyond the contract's robustness checks is collected and offered to you once, at the end, instead of being fixed round by round. Every decision it makes for you is written to the test report, and it stops before `/dev-6-final`, so commit, push and merge stay yours. It needs a complete contract and stops if a decision is still open, since that decision is yours. Details are in section 12 of the guideline.
+`/dev-auto NN` runs steps 1 to 5 for one sub-spec in up to three rounds without asking you anything, and stops before `/dev-6-final`, so commit, push and merge stay yours. It needs a complete contract. See section 11 of the guideline.
 
 ## Docker
 
-The test suite and the application run in a container the project ships: a `Dockerfile` pinned from a lock file, an allow-list `.dockerignore` (code and tests only), `PYTHONPATH` instead of an editable install, a non-root user, `--network none` with data mounted read-only, and the two run commands in the Dockerfile header. The runner, the implementer and `/dev-6-final` run the suite in that image and record which image the counts came from; every skip carries its reason. A repository without an image gets one as its first unit from `/dev-0-split`. The recipe, including a GPU variant and the Windows notes, is in the guideline, section 6, "Docker".
+The suite and the application run in a container the project ships; a repository without one gets it as its first unit from `/dev-0-split`. Recipe, GPU variant and Windows notes: guideline section 6, "Docker".
 
 ## Install
 

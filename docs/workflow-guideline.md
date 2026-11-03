@@ -43,7 +43,7 @@ Brainstorm ─► /dev-spec ──────────► Complete spec/<spe
           All INDEX rows "done" → full spec on main   /dev-retro: reads the ledger, proposes
                                                    workflow changes, you approve each
 
-  Hands-off alternative for steps 1–5: /dev-auto NN  (section 12)
+  Hands-off alternative for steps 1–5: /dev-auto NN  (section 11)
 ```
 
 Convention: one sub-spec per session; rename the session after the sub-spec (`/rename 04-shared-head`).
@@ -72,7 +72,7 @@ Convention: one sub-spec per session; rename the session after the sub-spec (`/r
 └── <your code and tests>
 ```
 
-Outside the repo, `~/.claude/workflow-metrics/` holds the usage ledger (`LEDGER.md`, `ledger.jsonl`, `findings.jsonl`, `escaped.jsonl`) and `CHANGES.md`, the log of workflow changes made from it (section 13).
+Outside the repo, `~/.claude/workflow-metrics/` holds the usage ledger (`LEDGER.md`, `ledger.jsonl`, `findings.jsonl`, `escaped.jsonl`) and `CHANGES.md`, the log of workflow changes made from it (section 12).
 
 **Statuses:** `not-started` → `in-progress` (set by `/dev-1-select`) → `done` (set by `/dev-6-final`). `pre-existing` marks work that existed before the split. Never edit statuses by hand.
 
@@ -146,14 +146,14 @@ Open questions: none
 | 4 | `/dev-4-review NN` | session / low | **Review it.** Both **reviewer** agents run in parallel against the sub-spec, the contract and the conventions. Each brief carries a budget: the compliance reviewer returns a table with one verdict per acceptance check and at most 10 findings; the pipeline reviewer starts from the contract's risks and the hazard register, returns at most 8, and skips limitations already recorded. After fixes, a **focused re-review** checks only the fixed findings and what changed since the last review. It falls back to a full review when the fix is large or changes an interface. Fixes nothing. | clean → `/dev-6-final NN`; any finding → `/dev-5-fix-review NN` |
 | 5 | `/dev-5-fix-review NN` | session / high | **Work on the review.** Checks each finding against the code and the contract (code that follows a decision isn't a defect), proving runtime claims with a script. You decide **fix / accept / reject** for each finding. Fixes go to the root cause and come with a regression test. Accepted findings that oblige a later unit become handoffs. | anything fixed → `/dev-3-test NN`, then `/dev-4-review NN`; nothing fixed → `/dev-6-final NN` |
 | 6 | `/dev-6-final NN` | session / medium | **Finalize it.** Refuses if the reports are missing or stale, or if a finding has no resolution. Closes the unit's incoming handoffs and shows what changed in its contract. Then, asking you before each step: commits, pushes, opens a PR or merges, marks the row `done`, deletes the branch, writes a log entry and records the unit in the usage ledger (cost by role, model and effort; rounds; first-run failures by class; findings). It is the only command that touches git history. | `/dev-1-select` for the next unblocked NN |
-| auto | `/dev-auto NN` | Sonnet / medium | Steps 1–5 unattended, in up to 3 rounds plus at most one hardening round you choose at the end; see section 12. | `/dev-6-final NN` |
+| auto | `/dev-auto NN` | Sonnet / medium | Steps 1–5 unattended, in up to 3 rounds plus at most one hardening round you choose at the end; see section 11. | `/dev-6-final NN` |
 | retro | `/dev-retro [project]` | Opus / high | Every few units. Reads the ledger and the test reports, traces each extra round to its cause (spec gap, test defect, wrong behaviour, hardening, a bug introduced by a fix, cost without rounds), checks whether earlier changes worked, and proposes at most five edits to the commands, agents, templates or conventions. You approve each; approved ones are logged in `CHANGES.md` with the evidence. | — |
 | any | `/dev-save` | session / low | Writes a handoff entry to `CLAUDE.local.md`: branch, last commit, uncommitted files, report status, what was done, decisions, open items and the exact `/dev-…` command to resume with. | the resume line |
 | — | `/no-claude-footprint` | session / low | Gitignores Claude Code files and installs git hooks that block committing them or crediting Claude in commit messages. Reports any existing traces. | — |
 
 `/dev-spec`, steps 0 to 6, `/dev-auto` and `/dev-retro` are **user-only** (`disable-model-invocation`): Claude never starts them on its own.
 
-Every test run — the runner in step 3, the implementer's own run in `/dev-auto`, the merged-main run in step 6 — happens inside the project's Docker image, and the report names that image (section 6, "Docker"). A project that has no image yet gets one as its first unit.
+Every test run — the runner in step 3, the implementer's own run in `/dev-auto`, the merged-main run in step 6 — happens inside the project's Docker image, and the report names that image (section 6, "Docker").
 
 ---
 
@@ -180,7 +180,7 @@ Each agent's tool access enforces its role, not just its instructions.
 | `check_contracts.py` | `dev-0-split/scripts/` | Enforces contract completeness at the `split`, `start` and `test` stages (section 3). |
 | `check_fidelity.py` | `dev-0-split/scripts/` | Confirms every sub-spec excerpt is word for word from the master spec, and lists master text no sub-spec covers. |
 | Templates | `dev-0-split/templates/` | `contract.md` (with `Example:`, `Extends:` and `### Robustness`), `CONVENTIONS.md` (12 conventions, including C9's `tests/stubs/` rule, C11 readability and C12 the container, plus the ML hazard register with HZ13 machine-dependent tests) and `HANDOFFS.md`. |
-| `usage_ledger.py` | `scripts/` (skills reach it as `${CLAUDE_PLUGIN_ROOT}/scripts/`) | Measures a unit's cost from the session transcripts by role, model and effort; records rows, stopped runs, findings and escapes; renders `~/.claude/workflow-metrics/LEDGER.md` (section 13). |
+| `usage_ledger.py` | `scripts/` (skills reach it as `${CLAUDE_PLUGIN_ROOT}/scripts/`) | Measures a unit's cost from the session transcripts by role, model and effort; records rows, stopped runs, findings and escapes; renders `~/.claude/workflow-metrics/LEDGER.md` (section 12). |
 | `changeset.py` | `dev-3-test/scripts/` | Lists everything the branch changed since main (committed, uncommitted and new files; `spec/` excluded) and prints a **fingerprint**; `/dev-6-final` refuses if the code changed after test or review. `--snapshot` records the reviewed state as a git tree object (no commit, branch or index change), and `--since` diffs against it for the focused re-review. |
 | `interface_surface.py` | `dev-3-test/scripts/` | Prints function and class signatures and constant names, with no bodies and no values. |
 | `hooks/hooks.json` | plugin root | Registers the three hooks below in every session the plugin is enabled in. Plugin agents can't carry hooks of their own, so the two guards read `agent_type` from the hook input and act only inside the agent they protect. |
@@ -191,7 +191,7 @@ Each agent's tool access enforces its role, not just its instructions.
 
 ### Docker: the environment the suite and the application run in
 
-The project ships the environment both its tests and its application run in (convention C12), so a result means the same thing on every machine. What a laptop run can hide, a clean image shows: an editable install (`pip install -e .`) that makes the real `config` package shadow the temporary one a test builds in a subprocess; a test whose expectation depends on whether the machine has a GPU; a script test whose stubbed interpreter lets a real preprocessing step run the moment the data is present; a check pinning a run-state file the project keeps editing. The recipe the workflow expects:
+The project ships the environment both its tests and its application run in (convention C12), so a result means the same thing on every machine. A repository without an image gets one as its first unit from `/dev-0-split`. What a laptop run can hide, a clean image shows: an editable install (`pip install -e .`) that makes the real `config` package shadow the temporary one a test builds in a subprocess; a test whose expectation depends on whether the machine has a GPU; a script test whose stubbed interpreter lets a real preprocessing step run the moment the data is present; a check pinning a run-state file the project keeps editing. The recipe the workflow expects:
 
 - `Dockerfile`: a pinned base image, system libraries, the ML framework from its own index, then `pip install -r <lock file>`; `COPY . .`; a throwaway `git init` + commit when tests record the commit hash; a non-root user; `ENV PYTHONPATH=/app` instead of an editable install; the suite as `CMD`. The header states the build command, the run command for the suite and the run command for the application.
 - `.dockerignore` as an allow-list: `*`, then `!` for the code, tests, spec and lock file. Data, artifacts, outputs, virtual environments, git history and private notes never enter the image.
@@ -209,7 +209,7 @@ The project ships the environment both its tests and its application run in (con
   - A skill's `effort` costs nothing in cache terms.
   - A subagent's model is separate from the main session, so the agents' models never cause a switch.
 - **Why each choice:**
-  - **Opus** where reasoning decides correctness: writing the spec (`/dev-spec`), splitting it and settling decisions (0), planning and writing the code (2), the ML pipeline review, and the retro.
+  - **Opus** where reasoning decides correctness: the spec, the split, the code, the ML pipeline review and the retro (the tables in sections 4 and 5 give each one).
   - **Opus at high, not xhigh, for the pipeline review:** across 19 units xhigh cost 27% of all tokens and fixed 18 of 104 findings; the budget and the register-first scope matter more than the extra depth.
   - **Sonnet for the `/dev-auto` coordinator:** it routes work and triages findings, and its own calls were 17% of each unit's cost, so it runs on the cheaper model in a fresh session.
   - **Session model** for steps that coordinate agents or follow fixed procedures (1, 3, 4, 6), with effort sized to the job.
@@ -243,7 +243,7 @@ The project ships the environment both its tests and its application run in (con
 **New project**
 1. `git init` (if needed), then `/no-claude-footprint`.
 2. Put your finished spec in `Complete spec/`, or run `/dev-spec` in a fresh session to turn a brainstorm into the API protocol and the spec.
-3. Docker: the suite and the application run in a container the project ships (`Dockerfile` built from a lock file, allow-list `.dockerignore`; section 6, "Docker"). If the repository has none, `/dev-0-split` makes it the first unit; you don't write it by hand.
+3. Docker: if the repository ships no container, `/dev-0-split` makes it the first unit (section 6, "Docker").
 4. New session → `/dev-0-split` → confirm the split and build order → answer the decision questions → accept the baseline commit.
 5. New session per sub-spec: `/rename NN-slug` → `/dev-1-select NN` → `/dev-2-write NN` → `/dev-3-test NN` → `/dev-4-review NN` → `/dev-5-fix-review NN` → `/dev-6-final NN`, or `/dev-auto NN` → `/dev-6-final NN`.
    - Step 5 is skipped when the review is clean.
@@ -279,22 +279,7 @@ The project ships the environment both its tests and its application run in (con
 
 ---
 
-## 11. Sharing the framework
-
-The repository is a Claude Code plugin and its own marketplace (`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`). Anyone installs it with two commands and receives each release through `/plugin update`:
-
-```
-/plugin marketplace add nikhileshnarkhede/spec-driven-dev
-/plugin install contract-driven-dev@nikhileshnarkhede
-```
-
-Requirements: git, Python 3 on the `PATH` as `python` (the hooks call it by that name), and the project's own test framework (pytest in the examples). `gh` is needed only to open PRs from `/dev-6-final`. The model choices assume access to Opus and Sonnet; with an organisation allowlist that excludes one of them, Claude Code ignores that override and keeps the session model.
-
-To change the workflow itself, clone the repository, add the checkout as the marketplace (`/plugin marketplace add /path/to/checkout`), edit, run `/reload-plugins`, then bump `version` in `plugin.json`, add a `CHANGELOG.md` entry and tag a release. `/dev-retro` follows the same path when it changes a command.
-
----
-
-## 12. Unattended mode: `/dev-auto NN`
+## 11. Unattended mode: `/dev-auto NN`
 
 One command runs steps 1 to 5 for a sub-spec without asking you anything during the rounds, in up to three rounds plus at most one hardening round you choose at the end, and stops before step 6. Start it in a fresh session: it refuses a session that already carries other work (`--here` overrides), because every coordinator call re-reads the whole conversation.
 
@@ -332,15 +317,11 @@ One command runs steps 1 to 5 for a sub-spec without asking you anything during 
 - **Run it in auto mode,** because any permission prompt stalls an unattended run.
 - **Afterwards:** read the report's late decisions to confirm, then run `/dev-6-final NN`.
 
-**Renamed from the earlier version:** `/split-spec` → `/dev-0-split`, `/create-subspec` → `/dev-1-select`, `/verify-subspec` → `/dev-3-test`, `/review-subspec` → `/dev-4-review`, `/lock-subspec` → `/dev-6-final`, `/checkpoint` → `/dev-save`. `/dev-2-write`, `/dev-5-fix-review` and `/dev-auto` are new.
-
-## 13. The ledger, `/dev-retro` and `/dev-spec`
+## 12. The ledger, `/dev-retro` and `/dev-spec`
 
 **Ledger.** `scripts/usage_ledger.py` reads the Claude Code session transcripts and attributes every model call made while a unit was built: by role (coordinator, implementer, writer, runner, each reviewer), model and effort, weighted into comparable cost units (Fable 2.5, Opus 1, Sonnet 0.6, Haiku 0.2 on input; cache write ×1.25, cache read ×0.1, output ×5). `/dev-6-final` records one row per finished unit — mode, rounds, the first verification run and its failures by class, test defects, why each extra round happened, finding counts, lines and acceptance checks, cost by phase — and `/dev-auto` records stopped runs. `~/.claude/workflow-metrics/LEDGER.md` renders it all, with a reviewer-yield table (raised / fixed / accepted / rejected and cost per fixed finding) and an escapes table (defects and couplings found after a unit closed).
 
 **Retro.** `/dev-retro` traces every round after the first to its cause — spec gap, test defect, wrong behaviour, hardening, a bug introduced by a fix, or cost without rounds — counts the causes across units, checks whether earlier changes worked, and proposes at most five edits to the commands, agents, templates or conventions, each with its expected effect and its risk. You approve each; approved changes are logged in `CHANGES.md` with the evidence and the units to check them against.
-
-**What the first 25 units taught.** Verification became nearly one-pass once contracts existed (median one failing check, mostly fixture misreads by the writer). The extra rounds came from review findings and from a hardening round chosen after review in almost every unit; review was a third of all cost; three oversized units took a third more; most escapes were a later unit's contract breaking an earlier unit's locked test file. The current rules follow from that: robustness checks are written into the contract at split time and built in round 1; reviewers have budgets and skip limitations already recorded; the contract check refuses more than 16 acceptance checks or 700 estimated source lines, and refuses an index that isn't in dependency order; interfaces carry an `Example:` line the writer builds fixtures from and `Extends:` lines naming the earlier functions a unit changes; stubs for other units' interfaces live in `tests/stubs/`, so a legitimate change updates a stub instead of a locked file.
 
 **Spec.** `/dev-spec` sits before the split: it interviews you, writes an API protocol (architecture, structural flow, every public interface with an example, data contracts, configuration, conventions, extension sockets) and then a complete spec whose sections are the future units — one concern each, at most 12 requirements, ordered so that every section depends only on earlier ones — and checks the result before handing it to `/dev-0-split`.
 
