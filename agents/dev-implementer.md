@@ -32,7 +32,7 @@ Work as the senior engineer who owns one sub-spec in an unattended run. Nobody w
 - Write ordinary unit tests next to the existing ones: at least one per acceptance check, with its ID in the test name where it fits (`test_ac3_...`); for each fix, a test that fails without it.
 - If your work leaves an obligation for a later unit, add an `open` row to `spec/HANDOFFS.md`.
 - Never edit the verification file `test_subspec_NN_*.py` (a hook blocks it). If you believe one of its checks is wrong, say so in your report with evidence; don't work around it.
-- Run the project's full test suite before you finish. Never commit, push or change branches.
+- Run the project's full test suite before you finish — in the project's container image when it ships one (C12; the command stands in the Dockerfile header), so the counts you report are the ones the independent runner will see. A dependency you add goes into the lock file and the Dockerfile, never only into your local environment. Never commit, push or change branches.
 
 ## Report (your final message)
 - Files changed, public interfaces, config keys added.
@@ -40,4 +40,4 @@ Work as the senior engineer who owns one sub-spec in an unattended run. Nobody w
 - Work-list items (fix mode): each one fixed (how), or not fixed (why, with evidence).
 - Late decisions and new handoffs.
 - Suspected test defects or spec contradictions, with evidence.
-- Full-suite result: passed / failed / errors.
+- Full-suite result: passed / failed / errors / skipped, and the environment (image tag or host).

@@ -53,15 +53,15 @@ Any implementer launch carries at most 5 work items, most severe first; the rest
 
 **a. Implement.** Launch the round's implementer with: the sub-spec path, the contract path, `spec/CONVENTIONS.md`, the round number and mode, the work list (empty in round 1; otherwise each item as `file:line`, class and observed value), and the run-log location. In round 3, add a short account of what rounds 1–2 tried and why it didn't close the list. In round 1 the implementer first fixes `## Interfaces` (exact signatures and one `Example:` line each); when it returns, `CC --stage test` must pass — if not, send the errors back once, then stop.
 
-**b. Test.** Round 1 only: run `CS` for the change set; work out the test directory, framework and the exact command that runs one file; the verification file is `<test dir>/test_subspec_NN_<slug_with_underscores>.py`; run `IS` on the change set's non-test Python files. Write the change set's paths, one per line, to `<git-dir>/verification-writer-denylist`, then launch `spec-verification-writer` with: the sub-spec path, the contract path, `spec/CONVENTIONS.md`, the interface surface pasted in full, the framework and import conventions, a conftest or fixture file to reuse, the project's `tests/stubs/` module if it exists, and the exact file path to write. Never name the implementation files or describe how the code works. Delete the denylist as soon as the writer returns (and recreate it around every later writer launch).
+**b. Test.** Round 1 only: run `CS` for the change set; work out the test directory, framework and the exact command that runs one file (the container's command when the project ships a `Dockerfile`, C12 — `docker build` once, then `docker run --rm --network none` with only the data the tests need mounted read-only; the host's command only as a fallback the report names); the verification file is `<test dir>/test_subspec_NN_<slug_with_underscores>.py`; run `IS` on the change set's non-test Python files. Write the change set's paths, one per line, to `<git-dir>/verification-writer-denylist`, then launch `spec-verification-writer` with: the sub-spec path, the contract path, `spec/CONVENTIONS.md`, the interface surface pasted in full, the framework and import conventions, a conftest or fixture file to reuse, the project's `tests/stubs/` module if it exists, and the exact file path to write. Never name the implementation files or describe how the code works. Delete the denylist as soon as the writer returns (and recreate it around every later writer launch).
 
-Every round: launch `spec-verification-runner` with the verification file path, the command that runs it, the full-suite command and the contract path. Re-run `CS` for the fingerprint and replace only `## Verification`:
+Every round: launch `spec-verification-runner` with the verification file path, the command that runs it, the full-suite command, the image tag when there is one, and the contract path. Re-run `CS` for the fingerprint and replace only `## Verification`:
 
 ```markdown
 ## Verification
-_Last run: YYYY-MM-DD HH:MM · change-set fingerprint: <fingerprint> · file: <verification file path>_
+_Last run: YYYY-MM-DD HH:MM · change-set fingerprint: <fingerprint> · file: <verification file path> · environment: <image tag, or host>_
 
-<N passed / M failed / K errors> · regressions elsewhere: <none, or list>
+<N passed / M failed / K errors / S skipped (each skip's reason)> · regressions elsewhere: <none, or list>
 
 - [PASS] AC<n> <check> — <source>
 - [FAIL · <not built | wrong behaviour | test defect | spec contradiction | environment>] AC<n> <check> — observed: <value>

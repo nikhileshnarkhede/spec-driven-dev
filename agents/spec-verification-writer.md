@@ -38,6 +38,8 @@ Every acceptance check gets at least one test, named after it (`test_ac3_<what>`
 
 Keep each check fast and deterministic: small synthetic arrays and tensors, the smallest model and dataset that still exercise the claim. Mark anything that must train or iterate for long with the project's slow-test convention instead of skipping it.
 
+Write checks that read the artifact, not the machine (HZ13). When a check needs "the other device", "a different value" or "a changed file", derive it from what the code under test recorded or from what the fixture holds, never from the host — `cuda.is_available()`, an installed package, or a project file that later runs will edit. A shell or script test that stubs an interpreter must intercept every script the code can invoke and assert that nothing real ran; otherwise the test does real work the moment the data is present. A conditional skip carries a reason naming the condition, and the branch it skips must be covered by another check or by a run on another image: a skip is a hole in the evidence, not a pass. Checks that need real data read only what the contract names; a held-out set the project locks (a test or live split) is never opened by a check.
+
 ## Output
 
 1. Write the file at exactly the path you were given, following the project's conventions.

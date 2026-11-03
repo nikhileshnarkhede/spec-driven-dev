@@ -16,7 +16,7 @@ Sub-spec: $ARGUMENTS (if empty, ask which one). Run everything from the reposito
 
 1. Read `spec/NN-*/test-report.md`. If `## Verification` or `## Review` still says "not yet run", stop and name the missing one.
 2. Run `python "${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/changeset.py"` and compare its fingerprint with the one recorded in each section. A mismatch means the code changed after that check ran: stop, say which section is stale, and recommend re-running it.
-3. Re-run the verification file named in the report with the project's test command. If the result differs from the report, stop.
+3. Re-run the verification file named in the report with the project's test command, in the project's container image when it ships one (C12). If the result differs from the report, stop.
 4. If either section lists failures or findings, show them next to their entries in `## Review resolutions` (written by `/dev-5-fix-review`) and ask the user to confirm each is fixed or consciously accepted. A finding with no resolution entry: stop and point to `/dev-5-fix-review NN`. Don't infer the answer.
 5. **Handoffs.** Every `open` row in `spec/HANDOFFS.md` addressed to this unit must be discharged before it ships. For each, show the acceptance check or test that proves it and set its status to `done (NN, <how>)`. One that isn't discharged: ask the user whether to re-address it to a later unit, drop it with a reason, or stop here.
 6. **Contract changes.** If `spec/NN-*/contract.md` exists, show `git diff <main> -- spec/NN-*/contract.md`: the interfaces fixed at the start and any late decisions, so the user sees every choice made after the split before it's committed.
@@ -35,7 +35,7 @@ Ask before pushing, even straight after an approved commit: pushing makes the wo
 
 ## 5. Merge — confirm first, separately
 
-With `gh` and a GitHub remote: ask whether to open a PR, then separately whether to merge it now; the PR description follows the same no-attribution rule. Without a remote, or with a remote but no `gh`: ask whether to merge the branch into the main branch locally. Try a fast-forward first (`git merge --ff-only`). If main has diverged (for example it merged `origin/main`), say so and ask before creating a merge commit (`git merge --no-ff`, message `Merge branch 'subspec/NN-<slug>'`, no attribution). If the merge is blocked by a phantom `spec/INDEX.md` modification (`git diff spec/INDEX.md` empty, line endings only), `git checkout -- spec/INDEX.md` clears it. Run the full test suite on the merged main before marking done.
+With `gh` and a GitHub remote: ask whether to open a PR, then separately whether to merge it now; the PR description follows the same no-attribution rule. Without a remote, or with a remote but no `gh`: ask whether to merge the branch into the main branch locally. Try a fast-forward first (`git merge --ff-only`). If main has diverged (for example it merged `origin/main`), say so and ask before creating a merge commit (`git merge --no-ff`, message `Merge branch 'subspec/NN-<slug>'`, no attribution). If the merge is blocked by a phantom `spec/INDEX.md` modification (`git diff spec/INDEX.md` empty, line endings only), `git checkout -- spec/INDEX.md` clears it. Run the full test suite on the merged main before marking done — in the image rebuilt from the merged tree when the project ships one (C12), and record the image and the counts (passed / failed / skipped, with each skip's reason) for the log entry; a host-only run is stated as such.
 
 ## 6. Mark done
 
@@ -57,7 +57,7 @@ Append to the project's `CLAUDE.local.md` the way the `dev-save` skill does — 
 **[YYYY-MM-DD] Sub-spec NN (<slug>) — done**
 - Delivered: <what was built — files and public interfaces>
 - Decisions: <decision — reason; only real ones>
-- Verification and review: <counts, fingerprint, each finding and how it was resolved>
+- Verification and review: <counts and skips, the environment (image tag or host), fingerprint, each finding and how it was resolved>
 - Unblocked: <sub-specs whose dependencies are now all done or pre-existing>
 ```
 

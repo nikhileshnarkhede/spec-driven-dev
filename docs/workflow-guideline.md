@@ -67,6 +67,8 @@ Convention: one sub-spec per session; rename the session after the sub-spec (`/r
 │       └── test-report.md         # ## Verification, ## Review, ## Review resolutions
 ├── CLAUDE.local.md                # your private progress/decision log (gitignored)
 ├── tests/stubs/<unit-slug>.py     # fakes for a unit's interfaces, owned by that unit (C9)
+├── Dockerfile, .dockerignore      # the environment the suite and the application run in (C12),
+├── <lock file>                    #   built from the lock file; run commands in the Dockerfile header
 └── <your code and tests>
 ```
 
@@ -160,7 +162,7 @@ Each agent's tool access enforces its role, not just its instructions.
 | Agent | Used by | Model / effort | Tools | Role |
 |---|---|---|---|---|
 | `spec-verification-writer` | step 3 | Sonnet / high · 40 turns | Read, Write, Edit, Grep, Glob; no shell, no CLAUDE.md; a hook refuses reads of the changed files | Test engineer. At least one test per acceptance check (`test_ac3_…`), from the sub-spec, contract and conventions only. Builds fixtures from the contract's `Example:` lines; takes names and defaults from the interface surface; never pins other units' defaults or signatures, faking them through `tests/stubs/`. Uses boundary, invariant, equivalence, prohibition and seeded statistical tests; expected values come from the contract and spec, never from calling the code. |
-| `spec-verification-runner` | step 3 | Sonnet / medium · 25 turns | Read, Bash, Grep; no write, no CLAUDE.md | Runs the checks and the full suite. Classifies each failure as **not built / wrong behaviour / test defect / spec contradiction / environment**, by acceptance check. Code that doesn't match the contract's interfaces counts as wrong behaviour. Never alters a check. |
+| `spec-verification-runner` | step 3 | Sonnet / medium · 25 turns | Read, Bash, Grep; no write, no CLAUDE.md | Runs the checks and the full suite, inside the project's container image when it ships one. Classifies each failure as **not built / wrong behaviour / test defect / spec contradiction / environment**, by acceptance check. Code that doesn't match the contract's interfaces counts as wrong behaviour. Lists every skip with its reason, says which data folders the run read, and reruns file by file after an out-of-memory kill. Never alters a check. |
 | `spec-compliance-reviewer` | step 4 | Sonnet / medium · 40 turns | Read, Grep, Glob; read-only | Traces every spec statement, acceptance check and handoff to the change: implemented, missing, mismatch, contradicts a decision, or **silently relaxed**. Returns a table with one verdict per acceptance check, then at most 10 findings. Treats contract decisions as binding and uses the ownership table for scope. Has a re-review mode. |
 | `pipeline-risk-reviewer` | step 4 (full review) | Opus / high · 40 turns | Read, Grep, Glob; read-only | Senior ML reviewer. Checks the contract's registered risks and robustness checks first, then the hazard register, then follows data across functions looking for leakage, broken evaluation, train/eval-mode and MC-dropout bugs, gradient flow, unit and scaling errors, nondeterminism, and boundary and copy-on-write traps. At most 8 findings; no finding for a limitation the contract, the handoff ledger or the resolutions already record. |
 | `pipeline-risk-reviewer-recheck` | step 4 (focused re-review) | Opus / high · 30 turns | Read, Grep, Glob; read-only | The same reviewer for re-reviews: confirms fixed findings are fixed at the root and the changed code adds no new silent bug. |
@@ -175,7 +177,7 @@ Each agent's tool access enforces its role, not just its instructions.
 |---|---|---|
 | `check_contracts.py` | `dev-0-split/scripts/` | Enforces contract completeness at the `split`, `start` and `test` stages (section 3). |
 | `check_fidelity.py` | `dev-0-split/scripts/` | Confirms every sub-spec excerpt is word for word from the master spec, and lists master text no sub-spec covers. |
-| Templates | `dev-0-split/templates/` | `contract.md` (with `Example:`, `Extends:` and `### Robustness`), `CONVENTIONS.md` (11 conventions, including C9's `tests/stubs/` rule and C11 readability, plus the ML hazard register) and `HANDOFFS.md`. |
+| Templates | `dev-0-split/templates/` | `contract.md` (with `Example:`, `Extends:` and `### Robustness`), `CONVENTIONS.md` (12 conventions, including C9's `tests/stubs/` rule, C11 readability and C12 the container, plus the ML hazard register with HZ13 machine-dependent tests) and `HANDOFFS.md`. |
 | `usage_ledger.py` | `scripts/` (skills reach it as `${CLAUDE_PLUGIN_ROOT}/scripts/`) | Measures a unit's cost from the session transcripts by role, model and effort; records rows, stopped runs, findings and escapes; renders `~/.claude/workflow-metrics/LEDGER.md` (section 13). |
 | `changeset.py` | `dev-3-test/scripts/` | Lists everything the branch changed since main (committed, uncommitted and new files; `spec/` excluded) and prints a **fingerprint**; `/dev-6-final` refuses if the code changed after test or review. `--snapshot` records the reviewed state as a git tree object (no commit, branch or index change), and `--since` diffs against it for the focused re-review. |
 | `interface_surface.py` | `dev-3-test/scripts/` | Prints function and class signatures and constant names, with no bodies and no values. |
@@ -184,6 +186,14 @@ Each agent's tool access enforces its role, not just its instructions.
 | Verification-file guard | `hooks/guard-verification-file.py` | Blocks the implementer agents' edits to `test_subspec_NN_*.py`. |
 | Save reminder | `hooks/checkpoint-reminder.py` (Stop hook) | If `CLAUDE.local.md` is more than 20 minutes old and the repo has uncommitted changes, reminds you to run `/dev-save`. |
 | Git hooks | `.git/hooks/pre-commit`, `commit-msg` | Installed by `/no-claude-footprint`. |
+
+**The container (C12).** The project ships the environment both its tests and its application run in, so a result means the same thing on every machine. What a laptop run can hide, a clean image shows: an editable install (`pip install -e .`) that makes the real `config` package shadow the temporary one a test builds in a subprocess; a test whose expectation depends on whether the machine has a GPU; a script test whose stubbed interpreter lets a real preprocessing step run the moment the data is present; a check pinning a run-state file the project keeps editing. The recipe the workflow expects:
+
+- `Dockerfile`: a pinned base image, system libraries, the ML framework from its own index, then `pip install -r <lock file>`; `COPY . .`; a throwaway `git init` + commit when tests record the commit hash; a non-root user; `ENV PYTHONPATH=/app` instead of an editable install; the suite as `CMD`. The header states the build command, the run command for the suite and the run command for the application.
+- `.dockerignore` as an allow-list: `*`, then `!` for the code, tests, spec and lock file. Data, artifacts, outputs, virtual environments, git history and private notes never enter the image.
+- Running: `docker run --rm --network none`, with the data the tests need mounted read-only (`-v <host>:<path>:ro`) and nothing else — a held-out set the project locks (a test or live split) is mounted only when the user says so, and the run report names every folder it read.
+- Memory-bound suites run file by file inside the container; one process over the whole suite can be killed by the memory limit and report nothing. A GPU variant (`Dockerfile.gpu`: the framework's CUDA wheel, run with `--gpus all`) exercises the branches a CPU image skips, so between the two images no conditional test stays unrun.
+- On Windows with Git Bash, set `MSYS_NO_PATHCONV=1` before `docker run` (otherwise `/app/...` mount paths are rewritten) and quote host paths with spaces; the WSL 2 memory limit (`.wslconfig`) is the container's memory limit.
 
 ---
 
@@ -220,6 +230,7 @@ Each agent's tool access enforces its role, not just its instructions.
 9. **Small units, in dependency order:** the contract check refuses more than 16 acceptance checks or 700 estimated source lines per unit, and an index whose unit depends on a later number.
 10. **Robustness in round 1:** every contract carries robustness checks from the hazard register, so hardening is built with the feature, not in a round after review.
 11. **It keeps its own record:** every finished unit and every stopped run is measured into the ledger, and `/dev-retro` changes the workflow only from that evidence, with your approval.
+12. **One environment:** the suite and the application run in the container the project ships (C12); reported counts name the image they came from, every skip carries its reason, and a test never reads the machine where it should read the artifact (HZ13).
 
 ---
 

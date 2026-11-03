@@ -38,6 +38,7 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 - **Right model per step.** Opus for splitting, writing and the ML pipeline review; the session model elsewhere, with effort sized to each step.
 - **Robustness is built in, not bolted on.** Each contract carries robustness checks derived from the project's hazard register, so hardening lands in round 1 instead of a third round after review.
 - **Small units, enforced.** The contract check refuses more than 16 acceptance checks or 700 estimated source lines per unit, with no override, and refuses an index whose unit depends on a later-numbered one: units are numbered in dependency order, most independent first.
+- **One environment.** The project ships a container (a pinned Dockerfile built from a lock file, code copied in through an allow-list, data mounted read-only, no network) and both the test suite and the application run in it. Test counts name the image they came from, every skip carries its reason, and the conventions forbid tests that read the machine instead of the artifact.
 - **It learns from its own record.** `/dev-6-final` writes every finished unit to a global ledger (cost by role, model and effort; rounds; first-run failures by class; reviewer yield; escapes). `/dev-retro` reads it and proposes the smallest workflow change that removes a recurring cause; each change is logged with the evidence and the units to check it against.
 
 ## Contents
@@ -61,7 +62,7 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 
 ## Install
 
-Requirements: Claude Code 2.1 or later with access to Opus and Sonnet; git; Python 3 on your `PATH` as `python` (the hooks and scripts call it by that name); your project's test framework (the examples use pytest); `gh` only if you want `/dev-6-final` to open PRs.
+Requirements: Claude Code 2.1 or later with access to Opus and Sonnet; git; Python 3 on your `PATH` as `python` (the hooks and scripts call it by that name); your project's test framework (the examples use pytest); Docker, since the suite and the application run in the project's container (guideline section 6); `gh` only if you want `/dev-6-final` to open PRs.
 
 In Claude Code (the repository keeps its original name, `spec-driven-dev`; the plugin is `contract-driven-dev`):
 

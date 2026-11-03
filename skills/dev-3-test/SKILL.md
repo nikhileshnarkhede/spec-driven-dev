@@ -23,7 +23,7 @@ Sub-spec: $ARGUMENTS (if empty, ask which one). Run everything from the reposito
    ```
    python "${CLAUDE_PLUGIN_ROOT}/skills/dev-3-test/scripts/changeset.py"
    ```
-3. Work out the project's test setup with Glob and Read: the test directory that serves the code in the change set (where `conftest.py` or existing `test_*.py` files live), the framework, its import conventions, and the exact command that runs a single test file from the right working directory. Ask only if it's genuinely ambiguous.
+3. Work out the project's test setup with Glob and Read: the test directory that serves the code in the change set (where `conftest.py` or existing `test_*.py` files live), the framework, its import conventions, and the exact command that runs a single test file from the right working directory. Ask only if it's genuinely ambiguous. If the project ships a `Dockerfile` (C12), the commands are the container's: `docker build -t <project>-test .` once, then `docker run --rm --network none -v <data>:<path>:ro <image> <test command>` as the Dockerfile header states, mounting only the data folders the tests need — never a held-out set the project locks, unless the user says so. The brief names the image; a host command is a fallback the report has to name.
 4. The verification file is `<test dir>/test_subspec_NN_<slug_with_underscores>.py`.
 5. Extract the interface surface — signatures only, no bodies or constant values — of the change set's non-test Python files:
    ```
@@ -41,7 +41,7 @@ Every time the writer is launched (here, or to correct a check), first write the
 
 ## 3. Run and triage
 
-Launch `spec-verification-runner` with: the verification file path, the exact command that runs it, the command that runs the project's full test suite, and the contract path (so it can map each failure to its acceptance check and tell an interface mismatch from a test defect).
+Launch `spec-verification-runner` with: the verification file path, the exact command that runs it, the command that runs the project's full test suite, the image tag when the project runs in a container, and the contract path (so it can map each failure to its acceptance check and tell an interface mismatch from a test defect).
 
 ## 4. Record
 
@@ -49,9 +49,9 @@ Show the user the runner's report unchanged, failures included. Re-run `changese
 
 ```markdown
 ## Verification
-_Last run: YYYY-MM-DD HH:MM · change-set fingerprint: <fingerprint> · file: <verification file path>_
+_Last run: YYYY-MM-DD HH:MM · change-set fingerprint: <fingerprint> · file: <verification file path> · environment: <image tag, or host>_
 
-<N passed / M failed / K errors> · regressions elsewhere: <none, or list>
+<N passed / M failed / K errors / S skipped (each skip's reason)> · regressions elsewhere: <none, or list>
 
 - [PASS] AC<n> <check> — <source: §x / D<n> / C<n>>
 - [FAIL · <not built | wrong behaviour | test defect | spec contradiction | environment>] AC<n> <check> — observed: <value>

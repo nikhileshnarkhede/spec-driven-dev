@@ -4,6 +4,20 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-02
+
+### Added
+
+- **The project's container is the environment** for both the test suite and the application. New convention C12 in the `CONVENTIONS.md` template: a pinned `Dockerfile` built from a lock file, an allow-list `.dockerignore`, `PYTHONPATH` instead of an editable install, a non-root user, `--network none` with data mounted read-only, the suite and application run commands in the Dockerfile header. `/dev-0-split` and `/dev-spec` make the container the first unit when a repository has none; `/dev-3-test`, `/dev-auto`, the implementer and `/dev-6-final` run the suite in the image and record which image the counts came from; the merged-main run in `/dev-6-final` rebuilds the image from the merged tree.
+- **Hazard HZ13, machine-dependent tests**, with matching rules for the test writer: expectations come from the artifact or the fixture, never from the host (`cuda.is_available()`, an installed package, a run-state file the project edits); a stubbed interpreter intercepts every script the code can call; a skip carries its reason and its other branch is covered elsewhere; a held-out set the project locks is never opened by a check.
+- **The runner accounts for every skip and every data folder**: it runs with `-rs`, lists each skip with its reason, names the folders the run mounted or read (a locked held-out set on its own line), treats an out-of-memory kill as an environment observation and reruns file by file, and ends its one-line total with the environment.
+- Guideline section 6 gains the container recipe (allow-list, lock file, no editable install, read-only mounts, per-file runs under a memory limit, a GPU variant so no conditional test stays unrun between the two images, the Windows Git Bash and WSL notes) and rule 12; the README lists Docker as a requirement.
+
+### Notes
+
+- Drawn from the SCANIA project's clean-environment run of 2026-11-02 (7,345 CPU and 7,344 GPU checks over two images): a host-only suite had hidden an editable-install shadowing of a test's temporary `config` module, a device check that read the machine instead of the bundle, a script stub that let real preprocessing run when the data was present, a test pinning the approved-runs file, and an unexplained skip count.
+- No `docker` command is pre-approved in `allowed-tools`, for the same reason `pytest` is not (0.3.2): a wildcard after it lets anything through. The build and the run ask once per turn; the runner agent runs them inside its own shell.
+
 ## [0.3.2] - 2026-10-31
 
 ### Changed
@@ -57,7 +71,8 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.2.0...v0.3.0
