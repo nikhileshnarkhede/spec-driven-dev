@@ -153,6 +153,8 @@ Open questions: none
 
 `/dev-spec`, steps 0 to 6, `/dev-auto` and `/dev-retro` are **user-only** (`disable-model-invocation`): Claude never starts them on its own.
 
+Every test run — the runner in step 3, the implementer's own run in `/dev-auto`, the merged-main run in step 6 — happens inside the project's Docker image, and the report names that image (section 6, "Docker"). A project that has no image yet gets one as its first unit.
+
 ---
 
 ## 5. Agents
@@ -187,7 +189,9 @@ Each agent's tool access enforces its role, not just its instructions.
 | Save reminder | `hooks/checkpoint-reminder.py` (Stop hook) | If `CLAUDE.local.md` is more than 20 minutes old and the repo has uncommitted changes, reminds you to run `/dev-save`. |
 | Git hooks | `.git/hooks/pre-commit`, `commit-msg` | Installed by `/no-claude-footprint`. |
 
-**The container (C12).** The project ships the environment both its tests and its application run in, so a result means the same thing on every machine. What a laptop run can hide, a clean image shows: an editable install (`pip install -e .`) that makes the real `config` package shadow the temporary one a test builds in a subprocess; a test whose expectation depends on whether the machine has a GPU; a script test whose stubbed interpreter lets a real preprocessing step run the moment the data is present; a check pinning a run-state file the project keeps editing. The recipe the workflow expects:
+### Docker: the environment the suite and the application run in
+
+The project ships the environment both its tests and its application run in (convention C12), so a result means the same thing on every machine. What a laptop run can hide, a clean image shows: an editable install (`pip install -e .`) that makes the real `config` package shadow the temporary one a test builds in a subprocess; a test whose expectation depends on whether the machine has a GPU; a script test whose stubbed interpreter lets a real preprocessing step run the moment the data is present; a check pinning a run-state file the project keeps editing. The recipe the workflow expects:
 
 - `Dockerfile`: a pinned base image, system libraries, the ML framework from its own index, then `pip install -r <lock file>`; `COPY . .`; a throwaway `git init` + commit when tests record the commit hash; a non-root user; `ENV PYTHONPATH=/app` instead of an editable install; the suite as `CMD`. The header states the build command, the run command for the suite and the run command for the application.
 - `.dockerignore` as an allow-list: `*`, then `!` for the code, tests, spec and lock file. Data, artifacts, outputs, virtual environments, git history and private notes never enter the image.
@@ -239,13 +243,14 @@ Each agent's tool access enforces its role, not just its instructions.
 **New project**
 1. `git init` (if needed), then `/no-claude-footprint`.
 2. Put your finished spec in `Complete spec/`, or run `/dev-spec` in a fresh session to turn a brainstorm into the API protocol and the spec.
-3. New session → `/dev-0-split` → confirm the split and build order → answer the decision questions → accept the baseline commit.
-4. New session per sub-spec: `/rename NN-slug` → `/dev-1-select NN` → `/dev-2-write NN` → `/dev-3-test NN` → `/dev-4-review NN` → `/dev-5-fix-review NN` → `/dev-6-final NN`, or `/dev-auto NN` → `/dev-6-final NN`.
+3. Docker: the suite and the application run in a container the project ships (`Dockerfile` built from a lock file, allow-list `.dockerignore`; section 6, "Docker"). If the repository has none, `/dev-0-split` makes it the first unit; you don't write it by hand.
+4. New session → `/dev-0-split` → confirm the split and build order → answer the decision questions → accept the baseline commit.
+5. New session per sub-spec: `/rename NN-slug` → `/dev-1-select NN` → `/dev-2-write NN` → `/dev-3-test NN` → `/dev-4-review NN` → `/dev-5-fix-review NN` → `/dev-6-final NN`, or `/dev-auto NN` → `/dev-6-final NN`.
    - Step 5 is skipped when the review is clean.
    - Steps 3 → 4 → 5 repeat until nothing more is fixed.
    - Every command's last line tells you which step comes next.
-5. Stopping early? `/dev-save`. In the next session, read the newest `Resume:` line in `CLAUDE.local.md` and run that command.
-6. Every few units: `/dev-retro`. It reads the ledger and proposes changes to the workflow; you approve each.
+6. Stopping early? `/dev-save`. In the next session, read the newest `Resume:` line in `CLAUDE.local.md` and run that command.
+7. Every few units: `/dev-retro`. It reads the ledger and proposes changes to the workflow; you approve each.
 
 **Project split before contracts existed:** start a session and run `/dev-0-split`. It upgrades the unfinished units, then continue as above.
 

@@ -4,6 +4,12 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-11-02
+
+### Changed
+
+- Docker gets its own heading everywhere it was only mentioned in passing: a "Docker" subsection in guideline section 6, a line in the Commands section and a Quick start step; a "Docker is the environment" section in the illustrated overview; a "Docker" section in the README. Documentation only.
+
 ## [0.4.1] - 2026-11-02
 
 ### Changed
@@ -77,7 +83,8 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.1...v0.3.2

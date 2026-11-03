@@ -325,7 +325,6 @@ svg text{font-family:var(--sans)}
 </figure>
 
 <p>If the person who wrote the code also writes the tests, the tests check what the code does, not what it should do. So the writer agent works from the spec and the function signatures alone. The runner can execute but not edit, so a failing check can't be "fixed" by weakening it. It sorts every failure into one of five classes (<em>not built</em>, <em>wrong behaviour</em>, <em>test defect</em>, <em>spec contradiction</em>, <em>environment</em>), and the class decides where you go next.</p>
-<p>All of this runs in the container the project ships, not on whichever laptop is nearby. The image is built from a lock file, the code is copied in through an allow-list, data is mounted read-only and the network is off. Every count names the image it came from, every skipped check carries its reason, and a test that reads the machine where it should read the artifact (whether a GPU is present, which packages are installed, what a file the project keeps editing says today) is a defect the conventions name. On one project a clean image exposed four such tests in a single run, after every laptop run had passed them.</p>
 <p>The two reviewers look for different things. One holds every spec statement against the change and returns a verdict per acceptance check. The other is a senior ML reviewer hunting for the silent bugs tests rarely catch, such as data leaking between splits or dropout left on at evaluation. Both have a budget: at most ten and eight findings, and neither reports a limitation the contract already records. Across the first 25 pieces, review had been a third of all tokens, most of it spent on findings everyone already knew about.</p>
 
 <h2>Evidence is checked at the signal</h2>
@@ -460,11 +459,15 @@ svg text{font-family:var(--sans)}
 
 <p>Every finished piece leaves a row: how many rounds it took, how its first independent test run went, why each extra round happened, and what every agent cost. The first 25 pieces taught three things. Once contracts existed, verification was nearly one-pass; the extra rounds came from review findings and from a hardening round chosen after review almost every time; and three oversized pieces took a third of all tokens. The rules in this article (robustness checks in the contract, reviewer budgets, the hard size cap, dependency-ordered numbering) came out of that record, and <code>/dev-retro</code> is how the next ones will.</p>
 
+<h2>Docker is the environment</h2>
+<p>All of the tests, and the application itself, run in a container the project ships, not on whichever laptop is nearby. The image is built from a lock file, the code is copied in through an allow-list, data is mounted read-only and the network is off. If a repository has no <code>Dockerfile</code> yet, the split makes one the first piece, so every later piece is tested inside it.</p>
+<p>Every count names the image it came from, every skipped check carries its reason, and a test that reads the machine where it should read the artifact (whether a GPU is present, which packages are installed, what a file the project keeps editing says today) is a defect the conventions name. On one project a clean image exposed four such tests in a single run, after every laptop run had passed them. The recipe (allow-list, lock file, no editable install, read-only mounts, a GPU variant, the Windows notes) is in the <a href="workflow-guideline.html">guideline</a>, section 6, "Docker".</p>
+
 <h2>Start</h2>
 <table class="start">
   <tr><th>Once per machine</th><td><code>/plugin marketplace add nikhileshnarkhede/spec-driven-dev</code>, then <code>/plugin install contract-driven-dev@nikhileshnarkhede</code></td></tr>
   <tr><th>Once per repo</th><td><code>/no-claude-footprint</code>, then put your spec in <code>Complete spec/</code>, or run <code>/dev-spec</code> to write it from a brainstorm</td></tr>
-  <tr><th>Once per project</th><td><code>/dev-0-split</code></td></tr>
+  <tr><th>Once per project</th><td><code>/dev-0-split</code>; if the repo has no Docker image, it becomes the first piece</td></tr>
   <tr><th>For each piece</th><td><code>/dev-1-select NN</code>, then follow the <code>Next:</code> line each command prints</td></tr>
   <tr><th>Hands-off</th><td><code>/dev-auto NN</code> in auto mode, then <code>/dev-6-final NN</code> once you have read its report</td></tr>
   <tr><th>When you stop</th><td><code>/dev-save</code>; next time, run the command on its <code>Resume:</code> line</td></tr>

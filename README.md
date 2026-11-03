@@ -60,6 +60,10 @@ Complete spec ──/dev-0-split──► spec/INDEX.md, CONVENTIONS.md, HANDOFF
 
 `/dev-auto NN` runs select → implement → test → review → fix for one sub-spec in up to three rounds, without asking you anything. The implementer is Sonnet at high effort; Opus at xhigh is used only in round 3 and only for failing checks or confirmed defects the second round couldn't close. Hardening beyond the contract's robustness checks is collected and offered to you once, at the end, instead of being fixed round by round. Every decision it makes for you is written to the test report, and it stops before `/dev-6-final`, so commit, push and merge stay yours. It needs a complete contract and stops if a decision is still open, since that decision is yours. Details are in section 12 of the guideline.
 
+## Docker
+
+The test suite and the application run in a container the project ships: a `Dockerfile` pinned from a lock file, an allow-list `.dockerignore` (code and tests only), `PYTHONPATH` instead of an editable install, a non-root user, `--network none` with data mounted read-only, and the two run commands in the Dockerfile header. The runner, the implementer and `/dev-6-final` run the suite in that image and record which image the counts came from; every skip carries its reason. A repository without an image gets one as its first unit from `/dev-0-split`. The recipe, including a GPU variant and the Windows notes, is in the guideline, section 6, "Docker".
+
 ## Install
 
 Requirements: Claude Code 2.1 or later with access to Opus and Sonnet; git; Python 3 on your `PATH` as `python` (the hooks and scripts call it by that name); your project's test framework (the examples use pytest); Docker, since the suite and the application run in the project's container (guideline section 6); `gh` only if you want `/dev-6-final` to open PRs.
