@@ -4,28 +4,13 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
-## [0.4.4] - 2026-11-03
-
-### Fixed
-
-- The illustrated overview (`docs/workflow-article.html`): the ledger diagram's "why the extra rounds" text ran into the cost column and its footer and Retro caption were cut off or overlapped; three other labels (Spec, Split; the test writer's subtitle in both the wide and the phone diagram; the hardening-candidates caption) ran past the edge of their diagram and were clipped. Checked at desktop and phone width for overlapping or clipped text. Documentation only.
-
-## [0.4.3] - 2026-11-03
-
-### Changed
-
-- Documentation de-duplicated and realigned; no behaviour change. The README is a landing page: the "Why" list is five points that link to the rules in guideline section 8, the unattended-mode and Docker paragraphs are pointers, and the command count is corrected (eleven `/dev-` commands plus the optional `/no-claude-footprint`). Guideline section 11 ("Sharing the framework") is removed because the README holds the install; unattended mode is now section 11 and the ledger, retro and spec section 12. Docker is explained once (section 6) and pointed to from the Commands and Quick start sections; the models section no longer repeats the tables.
-
-### Moved here from the guideline
-
-- Renamed from the earlier version: `/split-spec` is `/dev-0-split`, `/create-subspec` is `/dev-1-select`, `/verify-subspec` is `/dev-3-test`, `/review-subspec` is `/dev-4-review`, `/lock-subspec` is `/dev-6-final`, `/checkpoint` is `/dev-save`; `/dev-2-write`, `/dev-5-fix-review` and `/dev-auto` are new.
-- What the first 25 units taught: verification became nearly one-pass once contracts existed (median one failing check, mostly fixture misreads by the writer); the extra rounds came from review findings and from a hardening round chosen after review in almost every unit; review was a third of all cost; three oversized units took a third more; most escapes were a later unit's contract breaking an earlier unit's locked test file. The rules that followed: robustness checks in the contract and built in round 1; reviewer budgets; the 16-check / 700-line limit and dependency-ordered index; `Example:` and `Extends:` lines; stubs in `tests/stubs/`.
-
 ## [0.4.2] - 2026-11-02
 
 ### Changed
 
 - Docker gets its own heading everywhere it was only mentioned in passing: a "Docker" subsection in guideline section 6, a line in the Commands section and a Quick start step; a "Docker is the environment" section in the illustrated overview; a "Docker" section in the README. Documentation only.
+- Documentation de-duplicated and realigned. The README is a landing page (five-point "Why", pointers for unattended mode and Docker, command count corrected to eleven `/dev-` commands plus the optional `/no-claude-footprint`). Guideline section 11 ("Sharing the framework") is removed because the README holds the install, so unattended mode is section 11 and the ledger, retro and spec section 12; Docker is explained once (section 6); the models section no longer repeats the tables. Moved here from the guideline: the old command names (`/split-spec` is `/dev-0-split`, `/create-subspec` is `/dev-1-select`, `/verify-subspec` is `/dev-3-test`, `/review-subspec` is `/dev-4-review`, `/lock-subspec` is `/dev-6-final`, `/checkpoint` is `/dev-save`) and what the first 25 units taught (nearly one-pass verification once contracts existed; extra rounds from review findings and a hardening round chosen after review; oversized units took a third more; most escapes were a later unit's contract breaking an earlier unit's locked test file).
+- The illustrated overview: overlapping and clipped text fixed in the ledger diagram and four other labels, checked at desktop and phone width.
 
 ## [0.4.1] - 2026-11-02
 
@@ -100,9 +85,7 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.4...HEAD
-[0.4.4]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.3...v0.4.4
-[0.4.3]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.2...v0.4.3
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.2...HEAD
 [0.4.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.2...v0.4.0
