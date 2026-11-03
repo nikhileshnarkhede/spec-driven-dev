@@ -395,7 +395,7 @@ svg text{font-family:var(--sans)}
 
 <h2>Or let it run unattended</h2>
 <figure>
-<svg viewBox="0 0 600 540" role="img" aria-label="/dev-auto: after Select, round 1 builds on Sonnet, round 2 fixes on Sonnet, round 3 fixes on Sonnet, or on Opus only for defects round 2 could not close. Each round can exit to Ready for Final, which you run; hardening beyond the contract is offered to you once at the end. If work is still left after round 3, it stops and reports.">
+<svg viewBox="0 0 600 552" role="img" aria-label="/dev-auto: after Select, round 1 builds on Sonnet, round 2 fixes on Sonnet, round 3 fixes on Sonnet, or on Opus only for defects round 2 could not close. Each round can exit to Ready for Final, which you run; hardening beyond the contract is offered to you once at the end. If work is still left after round 3, it stops and reports.">
   <defs>
     <marker id="xa" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ca"/></marker>
     <marker id="xg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="cg"/></marker>
@@ -410,8 +410,8 @@ svg text{font-family:var(--sans)}
   <text class="note" x="74" y="418" style="fill:var(--amber)">still left</text>
   <!-- exits to done -->
   <path class="t g" style="stroke-width:5" d="M70,148 L98,176 L520,176 L520,452" marker-end="url(#xg)"/>
-  <path class="t g" style="stroke-width:5" d="M70,258 L98,286 L506,286"/>
-  <path class="t g" style="stroke-width:5" d="M70,368 L98,396 L506,396"/>
+  <path class="t g" style="stroke-width:5" d="M70,258 L98,286 L520,286"/>
+  <path class="t g" style="stroke-width:5" d="M70,368 L98,396 L520,396"/>
   <text class="note" x="420" y="168" text-anchor="middle" style="fill:var(--green)">nothing left</text>
   <!-- stations -->
   <circle class="stn" cx="60" cy="30" r="14"/><text class="num" x="60" y="31">1</text>
@@ -423,10 +423,10 @@ svg text{font-family:var(--sans)}
   <circle cx="60" cy="358" r="15" class="fv"/><text class="num-inv" x="60" y="359">R3</text>
   <text class="nm" x="90" y="348">Round 3: fix again</text><text class="sub" x="90" y="367">Sonnet; Opus xhigh only for defects round 2 couldn't close</text>
   <circle class="stop" cx="60" cy="466" r="16"/>
-  <text class="nm-s" x="60" y="503" text-anchor="middle">Stops and reports</text>
+  <text class="nm-s" x="30" y="503">Stops and reports</text>
   <circle class="end" cx="520" cy="466" r="16"/>
   <text class="nm-s" x="520" y="503" text-anchor="middle">Ready for Final</text>
-  <text class="sub" x="596" y="521" text-anchor="end">hardening candidates: one question to you</text>
+  <text class="sub" x="520" y="521" text-anchor="middle">hardening candidates:</text><text class="sub" x="520" y="538" text-anchor="middle">one question to you</text>
 </svg>
 <figcaption>* Review runs only once every test passes. Final, which commits, pushes and merges, always stays with you.</figcaption>
 </figure>
