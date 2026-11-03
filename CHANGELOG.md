@@ -4,6 +4,12 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-11-03
+
+### Fixed
+
+- The illustrated overview (`docs/workflow-article.html`): the ledger diagram's "why the extra rounds" text ran into the cost column and its footer and Retro caption were cut off or overlapped; three other labels (Spec, Split; the test writer's subtitle in both the wide and the phone diagram; the hardening-candidates caption) ran past the edge of their diagram and were clipped. Checked at desktop and phone width for overlapping or clipped text. Documentation only.
+
 ## [0.4.3] - 2026-11-03
 
 ### Changed
@@ -94,7 +100,8 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.0...v0.4.1

@@ -145,7 +145,7 @@ svg text{font-family:var(--sans)}
       <circle class="dec" cx="690" cy="200" r="17"/><text class="num" style="fill:#17202B" x="690" y="201">5</text>
       <circle class="end" cx="820" cy="200" r="17"/><text class="num-inv" x="820" y="201">6</text>
       <!-- labels -->
-      <text class="nm" x="40" y="244" text-anchor="middle">Spec, Split</text><text class="cmd" x="40" y="263" text-anchor="middle">once per project</text>
+      <text class="nm" x="64" y="244" text-anchor="middle">Spec, Split</text><text class="cmd" x="64" y="263" text-anchor="middle">once per project</text>
       <text class="nm" x="170" y="244" text-anchor="middle">Select</text><text class="cmd" x="170" y="263" text-anchor="middle">/dev-1-select</text>
       <text class="nm" x="300" y="244" text-anchor="middle">Write</text><text class="cmd" x="300" y="263" text-anchor="middle">/dev-2-write</text>
       <text class="nm" x="430" y="244" text-anchor="middle">Test</text><text class="cmd" x="430" y="263" text-anchor="middle">/dev-3-test</text>
@@ -246,7 +246,7 @@ svg text{font-family:var(--sans)}
   <circle class="stn" cx="470" cy="40" r="12" style="stroke:var(--green)"/>
   <text class="nm-s" x="492" y="37">Implementer</text><text class="sub" x="492" y="55">builds to the checks</text>
   <circle class="stn" cx="470" cy="125" r="12" style="stroke:var(--blue)"/>
-  <text class="nm-s" x="492" y="122">Test writer</text><text class="sub" x="492" y="140">one test per check, fixtures from its examples</text>
+  <text class="nm-s" x="492" y="122">Test writer</text><text class="sub" x="492" y="140">one test per check,</text><text class="sub" x="492" y="156">fixtures from examples</text>
   <circle class="stn" cx="470" cy="205" r="12" style="stroke:var(--blue)"/>
   <text class="nm-s" x="492" y="202">Compliance reviewer</text><text class="sub" x="492" y="220">decisions are binding</text>
   <circle class="stn" cx="470" cy="290" r="12" style="stroke:var(--violet)"/>
@@ -266,7 +266,7 @@ svg text{font-family:var(--sans)}
   <circle class="stn" cx="110" cy="240" r="12" style="stroke:var(--green)"/>
   <text class="nm-s" x="132" y="237">Implementer</text><text class="sub" x="132" y="255">builds to the checks</text>
   <circle class="stn" cx="110" cy="310" r="12" style="stroke:var(--blue)"/>
-  <text class="nm-s" x="132" y="307">Test writer</text><text class="sub" x="132" y="325">one test per check, fixtures from its examples</text>
+  <text class="nm-s" x="132" y="307">Test writer</text><text class="sub" x="132" y="325">one test per check,</text><text class="sub" x="132" y="341">fixtures from examples</text>
   <circle class="stn" cx="110" cy="380" r="12" style="stroke:var(--blue)"/>
   <text class="nm-s" x="132" y="377">Compliance reviewer</text><text class="sub" x="132" y="395">decisions are binding</text>
   <circle class="stn" cx="110" cy="450" r="12" style="stroke:var(--violet)"/>
@@ -426,7 +426,7 @@ svg text{font-family:var(--sans)}
   <text class="nm-s" x="60" y="503" text-anchor="middle">Stops and reports</text>
   <circle class="end" cx="520" cy="466" r="16"/>
   <text class="nm-s" x="520" y="503" text-anchor="middle">Ready for Final</text>
-  <text class="sub" x="520" y="521" text-anchor="middle">hardening candidates: one question to you</text>
+  <text class="sub" x="596" y="521" text-anchor="end">hardening candidates: one question to you</text>
 </svg>
 <figcaption>* Review runs only once every test passes. Final, which commits, pushes and merges, always stays with you.</figcaption>
 </figure>
@@ -441,18 +441,18 @@ svg text{font-family:var(--sans)}
   <rect class="board" x="0" y="0" width="600" height="250" rx="6"/>
   <text class="bd" x="22" y="30" style="font-weight:600">~/.claude/workflow-metrics/LEDGER.md</text>
   <text class="bd-dim" x="578" y="30" text-anchor="end">one row per finished piece</text>
-  <text class="bd-dim" x="22" y="62">#</text><text class="bd-dim" x="60" y="62">rounds</text><text class="bd-dim" x="140" y="62">first test run</text><text class="bd-dim" x="300" y="62">why the extra rounds</text><text class="bd-dim" x="520" y="62">cost</text>
-  <text class="bd" x="22" y="92">06</text><text class="bd" x="60" y="92">3</text><text class="bd" x="140" y="92">66 / 0 / 0</text><text class="bd" x="300" y="92">hardening ×2, fix-introduced bug</text><text class="bd" x="520" y="92">8.5M</text>
-  <text class="bd" x="22" y="122">07a</text><text class="bd" x="60" y="122">2</text><text class="bd" x="140" y="122">110 / 6 / 0</text><text class="bd" x="300" y="122">hardening (user-chosen)</text><text class="bd" x="520" y="122">2.1M</text>
-  <text class="bd" x="22" y="152">15b</text><text class="bd" x="60" y="152">3</text><text class="bd" x="140" y="152">121 / 11 / 37</text><text class="bd" x="300" y="152">48 fixture misreads; locked tests</text><text class="bd" x="520" y="152">9.5M</text>
-  <text class="bd" x="22" y="182">19</text><text class="bd" x="60" y="182">4</text><text class="bd" x="140" y="182">87 / 16 / 0</text><text class="bd" x="300" y="182">1,894 lines; Opus fix round 5.6M</text><text class="bd" x="520" y="182">15.8M</text>
-  <text class="bd-dim" x="60" y="222">… plus cost by role, model and effort, reviewer yield, and what escaped review</text>
+  <text class="bd-dim" x="22" y="62">#</text><text class="bd-dim" x="60" y="62">rounds</text><text class="bd-dim" x="140" y="62">first test run</text><text class="bd-dim" x="290" y="62">why the extra rounds</text><text class="bd-dim" x="578" y="62" text-anchor="end">cost</text>
+  <text class="bd" x="22" y="92">06</text><text class="bd" x="60" y="92">3</text><text class="bd" x="140" y="92">66 / 0 / 0</text><text class="bd" x="300" y="92">hardening ×2; fix bug</text><text class="bd" x="578" y="92" text-anchor="end">8.5M</text>
+  <text class="bd" x="22" y="122">07a</text><text class="bd" x="60" y="122">2</text><text class="bd" x="140" y="122">110 / 6 / 0</text><text class="bd" x="300" y="122">hardening (chosen)</text><text class="bd" x="578" y="122" text-anchor="end">2.1M</text>
+  <text class="bd" x="22" y="152">15b</text><text class="bd" x="60" y="152">3</text><text class="bd" x="140" y="152">121 / 11 / 37</text><text class="bd" x="300" y="152">48 fixture misreads</text><text class="bd" x="578" y="152" text-anchor="end">9.5M</text>
+  <text class="bd" x="22" y="182">19</text><text class="bd" x="60" y="182">4</text><text class="bd" x="140" y="182">87 / 16 / 0</text><text class="bd" x="300" y="182">1,894 lines; Opus round 5</text><text class="bd" x="578" y="182" text-anchor="end">15.8M</text>
+  <text class="bd-dim" x="22" y="222">… plus cost by role, model and effort, reviewer yield, escapes</text>
 
   <path class="t k" d="M40,250 L40,330"/>
   <path class="t a" d="M60,370 L540,370 Q560,370 560,350 L560,272" marker-end="url(#la)"/>
   <circle class="dec" cx="40" cy="370" r="17"/>
   <text class="nm" x="70" y="366">Retro</text><text class="cmd" x="70" y="384">/dev-retro, every few pieces</text>
-  <text class="note" x="300" y="398" text-anchor="middle" style="fill:var(--amber)">proposes changes to the commands; you approve each; the next rows show whether they worked</text>
+  <text class="note" x="300" y="410" text-anchor="middle" style="fill:var(--amber)">proposes changes you approve; later rows show if they worked</text>
 </svg>
 <figcaption>The ledger reads the session transcripts, so the numbers are measured, not reported. Cost is in relative units weighted by model price.</figcaption>
 </figure>
