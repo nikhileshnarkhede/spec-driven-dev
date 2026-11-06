@@ -4,6 +4,10 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+### Notes
+
+- Withdrawn from Claude's plugin directory. After the 0.5.0 check the directory refused the version on four counts that apply to every organization it has not verified: command hooks, `allowed-tools` beyond Read, Grep, Glob and LS, files other than Markdown, text, JSON, YAML and images, and frontmatter keys outside an unpublished list. Those are the plugin's mechanisms (the independence guards, the contract and fidelity checks, the fingerprint, the ledger, the model and effort routing), and the public documentation defines neither "verified" nor a way to apply for it. The plugin keeps everything and installs from this repository's marketplace; the README's Install section says so.
+
 ## [0.5.0] - 2026-11-06
 
 ### Changed

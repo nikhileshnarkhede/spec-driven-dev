@@ -73,6 +73,8 @@ In Claude Code (the repository keeps its original name, `spec-driven-dev`; the p
 
 That's the whole install: the commands appear as `/dev-…` (also as `/contract-driven-dev:dev-…`), the agents and the four hooks register themselves, and `/plugin update` brings in each release. The usage ledger is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`.
 
+The plugin is distributed from this repository's own marketplace, not from Claude's plugin directory. The directory accepts command hooks, scripts and files other than Markdown only from organizations it has verified, and this plugin's guarantees rest on exactly those: hooks that keep the test writer and the implementers apart, the contract and fidelity checks, the change-set fingerprint and the usage ledger. Rather than ship a version without them, it stays here, whole.
+
 To work on the workflow itself, clone the repository and add your checkout as the marketplace instead (`/plugin marketplace add /path/to/spec-driven-dev`): Claude Code then loads the plugin in place, and edits take effect after `/reload-plugins`.
 
 ## Quick start
