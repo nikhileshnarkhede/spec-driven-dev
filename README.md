@@ -2,7 +2,7 @@
 
 Build a large project from one complete spec with [Claude Code](https://code.claude.com), one piece at a time. No piece reaches `main` without independent evidence that it does what the spec says.
 
-A Claude Code plugin: eleven slash commands (plus the optional `/no-claude-footprint`), seven agents, three hooks and a usage ledger. Commands share the `/dev-` prefix and carry a step number, so typing `/dev-` lists them in order, and every command ends by printing the next one to run. The ledger records what every unit cost and why it needed each round, and `/dev-retro` turns that record into changes to the workflow itself.
+A Claude Code plugin: eleven slash commands (plus the optional `/no-claude-footprint`), seven agents, four hooks and a usage ledger. Commands share the `/dev-` prefix and carry a step number, so typing `/dev-` lists them in order, and every command ends by printing the next one to run. The ledger records what every unit cost and why it needed each round, and `/dev-retro` turns that record into changes to the workflow itself.
 
 ```
 Brainstorm ───/dev-spec──────► Complete spec/<name>.md + <name>-api-protocol.md
@@ -45,8 +45,9 @@ The full list of rules is section 8 of the guideline.
 | `skills/no-claude-footprint` | Optional: keeps Claude Code files and AI attribution out of a repo's history via git hooks |
 | `agents/` | `spec-verification-writer`, `spec-verification-runner`, `spec-compliance-reviewer`, `pipeline-risk-reviewer` and its re-review variant `pipeline-risk-reviewer-recheck`, plus `dev-implementer` and `dev-implementer-max` for `/dev-auto` |
 | `.claude-plugin/` | `plugin.json` (the manifest and version) and `marketplace.json`, which makes this repository its own marketplace |
-| `hooks/hooks.json` | Registers the three hooks below for every session the plugin is enabled in |
+| `hooks/hooks.json` | Registers the four hooks below for every session the plugin is enabled in |
 | `hooks/checkpoint-reminder.py` | Stop hook that reminds you to run `/dev-save` when you have unsaved progress |
+| `hooks/record-session.py` | Stop hook that records the session's transcript path for the usage ledger, so the ledger reads only transcripts it was told about |
 | `hooks/guard-verification-file.py` | Blocks edits to the independent verification file, inside the implementer agents only (`agent_type` in the hook input) |
 | `hooks/guard-writer-independence.py` | Refuses the test writer's reads of the files the change touched, inside that agent only |
 | `docs/` | Illustrated article and full guideline |
@@ -70,7 +71,7 @@ In Claude Code (the repository keeps its original name, `spec-driven-dev`; the p
 /plugin install contract-driven-dev@nikhileshnarkhede
 ```
 
-That's the whole install: the commands appear as `/dev-…` (also as `/contract-driven-dev:dev-…`), the agents and the three hooks register themselves, and `/plugin update` brings in each release. The usage ledger is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`.
+That's the whole install: the commands appear as `/dev-…` (also as `/contract-driven-dev:dev-…`), the agents and the four hooks register themselves, and `/plugin update` brings in each release. The usage ledger is written to `~/.claude/workflow-metrics/` on the first `/dev-6-final`.
 
 To work on the workflow itself, clone the repository and add your checkout as the marketplace instead (`/plugin marketplace add /path/to/spec-driven-dev`): Claude Code then loads the plugin in place, and edits take effect after `/reload-plugins`.
 
@@ -88,9 +89,9 @@ The step commands only run when you type them (`disable-model-invocation`). Ever
 
 Nothing leaves your machine. The plugin makes no network calls, reads no credentials and has no MCP servers.
 
-- **Hooks** (`hooks/`): three local Python scripts. Two guards inspect the file path of a Read, Grep, Write or Edit call to keep the test writer away from the code under test and implementers away from the verification file; the Stop hook checks the age of `CLAUDE.local.md` and `git status`. They store nothing.
+- **Hooks** (`hooks/`): four local Python scripts. Two guards inspect the file path of a Read, Grep, Write or Edit call to keep the test writer away from the code under test and implementers away from the verification file; a Stop hook checks the age of `CLAUDE.local.md` and `git status`; the other Stop hook writes the session's id, working directory and transcript path to `~/.claude/workflow-metrics/sessions.jsonl` (one line per session) so the ledger knows which transcripts to read. The guards and the reminder store nothing.
 - **Git**: the commands run `git` in your repository, and `gh` or `git push` only when you confirm it in `/dev-6-final`.
-- **Usage ledger** (`scripts/usage_ledger.py`): reads the Claude Code session transcripts under `~/.claude/projects/` for token counts, model names, timestamps and agent names, plus `git log` and `git diff --numstat` of your repository, and writes the result to `~/.claude/workflow-metrics/`. It never reads message text for anything but slash-command names and arguments, and nothing is sent anywhere.
+- **Usage ledger** (`scripts/usage_ledger.py`): reads only the session transcripts that the Stop hook registered (it never searches `~/.claude` on its own; a session from before the plugin was installed is added with `record --transcript <path>`) for token counts, model names, timestamps, working directories and agent names, plus `git log` and `git diff --numstat` of your repository, and writes the result to `~/.claude/workflow-metrics/`. It never reads message text for anything but slash-command names and arguments, and nothing is sent anywhere. The ledger exists so that `/dev-retro` can tune the commands and agents from what each one actually costs.
 - **Files written in your project**: `Complete spec/` (by `/dev-spec`, with your approval), `spec/` (sub-specs, contracts, test reports, the handoff ledger), the code and tests you approve, `CLAUDE.local.md` (a private log you keep gitignored), and `.git/verification-writer-denylist` while a test run is in progress.
 
 ## Notes

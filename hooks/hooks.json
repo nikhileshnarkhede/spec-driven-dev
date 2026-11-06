@@ -7,7 +7,10 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/guard-verification-file.py", "--require-agent"]
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/guard-verification-file.py",
+              "--require-agent"
+            ]
           }
         ]
       },
@@ -17,7 +20,10 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/guard-writer-independence.py", "--require-agent"]
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/guard-writer-independence.py",
+              "--require-agent"
+            ]
           }
         ]
       }
@@ -28,7 +34,16 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/checkpoint-reminder.py"]
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/checkpoint-reminder.py"
+            ]
+          },
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/record-session.py"
+            ]
           }
         ]
       }

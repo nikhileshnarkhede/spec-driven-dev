@@ -76,7 +76,7 @@ python "${CLAUDE_PLUGIN_ROOT}/scripts/usage_ledger.py" record --repo . --unit NN
   --note "<anything unusual, e.g. ran in a session carrying other work>"
 ```
 
-The script measures the tokens by role, model and effort from the session transcripts, plus the lines and acceptance checks of the change. Show its one-line result. If peak main context is above ~250k, say that a fresh session would have been cheaper.
+The script measures the tokens by role, model and effort from the session transcripts the plugin's Stop hook registered (a session from before the plugin was installed: add `--transcript <path>`), plus the lines and acceptance checks of the change. Show its one-line result. If peak main context is above ~250k, say that a fresh session would have been cheaper.
 
 ## 9. Report
 

@@ -4,6 +4,16 @@ All notable changes to this workflow. The format follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-06
+
+### Changed
+
+- **The usage ledger no longer searches the home directory.** A fourth hook, `hooks/record-session.py` (Stop), records each session's id, working directory and transcript path once per session in `~/.claude/workflow-metrics/sessions.jsonl`; `scripts/usage_ledger.py` reads only the transcripts registered there, plus any passed with the new `record --transcript <path>` (for sessions from before the plugin was installed). Measurements are unchanged: on the SCANIA project's unit 19 the old scan and the registry give identical results, transcript by transcript. The ledger is what `/dev-retro` tunes the commands and agents from, so its function is kept whole; only the way it finds its inputs changed.
+
+### Notes
+
+- Done for the plugin directory's review. Its policy scan held every version on "uses a credential from the user's machine" because the script globbed `~/.claude/projects/*/*.jsonl` (the same tree that holds Claude Code's own credentials file) while `/dev-6-final` runs `git push` and `gh`. The two were never related, and the README said so, but the plugin now also no longer names the home directory as a search root: Claude Code hands the transcript path to a hook, and the hook hands it to the ledger. The README's Data handling section and both scripts' docstrings explain the data path for the reviewer.
+
 ## [0.4.2] - 2026-11-02
 
 ### Changed
@@ -85,7 +95,8 @@ First public release.
 - The workflow was run end to end on a 25-unit ML project before this release. The rules on robustness checks, reviewer budgets, unit size and dependency-ordered numbering come from that record; the guideline's section 13 explains how.
 - The hazard register and the pipeline-risk reviewer are written for ML and data-pipeline code; adapt them for other domains.
 
-[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/nikhileshnarkhede/spec-driven-dev/compare/v0.3.2...v0.4.0

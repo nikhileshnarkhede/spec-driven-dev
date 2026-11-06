@@ -1,8 +1,16 @@
 """Workflow usage ledger: measure what one sub-spec cost, and keep the record across projects.
 
-Reads Claude Code session transcripts (~/.claude/projects/*/*.jsonl and their subagents/),
-attributes every model call made while the unit was being built, and stores one record per
-(project, unit) in ~/.claude/workflow-metrics/ledger.jsonl. LEDGER.md is regenerated from it.
+Reads the Claude Code session transcripts that the plugin's own Stop hook (hooks/record-session.py)
+registered in ~/.claude/workflow-metrics/sessions.jsonl, plus their subagents/ folders, attributes
+every model call made while the unit was being built, and stores one record per (project, unit) in
+~/.claude/workflow-metrics/ledger.jsonl. LEDGER.md is regenerated from it.
+
+Where the transcripts come from. Claude Code tells hooks the path of the current transcript and tells
+skills nothing, so the Stop hook records {session_id, cwd, transcript_path} once per session and this
+script reads only those files: it never searches the home directory itself. A session that ran before
+the hook existed can be added by hand with `record --transcript <path>`. From a transcript it keeps
+token counts, model names, timestamps, working directories and the names of dev commands and agents;
+nothing is sent anywhere.
 
     python usage_ledger.py record --repo . --unit 06 --mode auto --rounds 3 --first-run 66/0/0 \
         --test-defects 0 --findings fixed=9,accepted=6,handed_off=5,rejected=2 \
@@ -26,8 +34,8 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-HOME = Path.home() / ".claude"
-OUT = HOME / "workflow-metrics"
+OUT = Path.home() / ".claude" / "workflow-metrics"
+REGISTRY = OUT / "sessions.jsonl"   # written by hooks/record-session.py
 # Relative weights by model family (Opus 5.5 input = 1). Fable 5.1 lists at $10/$50 per MTok vs Opus 5.5 $4/$20,
 # so 2.5; Sonnet and Haiku keep the weights the first rows were measured with, for continuity. Unknown
 # families count at 1.0 rather than being dropped.
@@ -70,6 +78,17 @@ def read(path):
             yield json.loads(line)
         except json.JSONDecodeError:
             continue
+
+
+def registered_transcripts(extra=()):
+    """Transcripts the Stop hook registered (newest registration wins), plus any passed by hand."""
+    seen = {}
+    if REGISTRY.exists():
+        for d in read(REGISTRY):
+            if d.get("transcript_path"):
+                seen[d.get("session_id") or d["transcript_path"]] = Path(d["transcript_path"])
+    paths = list(seen.values()) + [Path(e) for e in extra]
+    return [p for p in dict.fromkeys(paths) if p.is_file()]
 
 
 def calls(path, lo, hi, repo, role):
@@ -128,8 +147,8 @@ def cost(fam, u):
                          + 0.1 * u["cache_read_input_tokens"] + 5 * u["output_tokens"])
 
 
-def measure(repo, unit, since, until, sessions, kind="unit"):
-    transcripts = [p for p in HOME.glob("projects/*/*.jsonl")]
+def measure(repo, unit, since, until, sessions, kind="unit", transcripts=()):
+    transcripts = registered_transcripts(transcripts)
     start_sha, start_ts = commit(repo, rf"start {re.escape(unit)}\b")
     done_sha, done_ts = commit(repo, rf"mark {re.escape(unit)} done")
     cmd_times = {p: list(dev_commands(p, unit)) for p in transcripts if not sessions}
@@ -275,7 +294,7 @@ def save(records):
 def render():
     records = load()
     lines = ["# Workflow ledger", "",
-             "One row per finished unit, written by `/dev-6-final`; stopped runs, selects and retros are logged with `--kind` (script: `~/.claude/scripts/usage_ledger.py`). "
+             "One row per finished unit, written by `/dev-6-final`; stopped runs, selects and retros are logged with `--kind` (script: `scripts/usage_ledger.py` in the plugin). "
              "`/dev-retro` reads it to find what makes units take extra rounds. Changes made from it: [CHANGES.md](CHANGES.md).", "",
              "Cost units (M): tokens weighted by price ratio — Fable 2.5, Opus 1, Sonnet 0.6, Haiku 0.2 on input; cache write ×1.25, "
              "cache read ×0.1, output ×5. Relative, not a bill. **Peak ctx** = largest main-session context; "
@@ -373,6 +392,8 @@ def main():
     rec.add_argument("--since")
     rec.add_argument("--until")
     rec.add_argument("--session", action="append", default=[])
+    rec.add_argument("--transcript", action="append", default=[],
+                     help="a transcript the Stop hook did not register (a session from before the plugin was installed)")
     rec.add_argument("--kind", default="unit", choices=["unit", "stopped", "retro", "select", "other"],
                      help="unit = a sub-spec build; other kinds log a session that did not finish a unit (unit = a unique label)")
     for k in ("mode", "rounds", "first-run", "first-run-classes", "test-defects", "findings", "causes", "note", "src-lines", "test-lines", "acs"):
@@ -402,7 +423,7 @@ def main():
     if a.cmd == "record":
         repo = Path(a.repo).resolve()
         project = a.project or repo.name
-        r = measure(repo, a.unit, a.since, a.until, a.session, a.kind)
+        r = measure(repo, a.unit, a.since, a.until, a.session, a.kind, a.transcript)
         for k in ("src_lines", "test_lines", "acs"):
             if getattr(a, k):
                 r["work"][k] = int(getattr(a, k))
